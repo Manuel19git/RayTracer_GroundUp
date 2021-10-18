@@ -1,19 +1,19 @@
-﻿  Main.cpp
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(11,49): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(11,67): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(14,31): warning C4244: 'inicializando': conversión de 'float' a 'unsigned int'; posible pérdida de datos
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(17,32): warning C4244: 'inicializando': conversión de 'float' a 'unsigned int'; posible pérdida de datos
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(35,36): warning C4305: 'argumento': truncamiento de 'double' a 'float'
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(38,38): warning C4305: 'argumento': truncamiento de 'double' a 'float'
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(39,36): warning C4305: 'argumento': truncamiento de 'double' a 'float'
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\tuples.h(34,54): warning C4244: 'argumento': conversión de 'T' a 'int'; posible pérdida de datos
+﻿  MyMatrix.cpp
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.h(47,18): warning C4244: 'return': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\include\xutility(3865,27): warning C4244: '=': conversión de 'const _Ty' a '_Ty'; posible pérdida de datos
           with
           [
-              T=float
+              _Ty=int
           ]
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(35): message : Vea la referencia a la creación de una instancia de la función plantilla "Tuple Tuple::operator *<float>(const T &)" que se está compilando
+          and
+          [
+              _Ty=float
+          ]
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.h(16): message : Vea la referencia a la creación de una instancia de la función plantilla "_OutIt *std::fill_n<float*,int,int>(_OutIt,const _Diff,const _Ty &)" que se está compilando
           with
           [
-              T=float
+              _OutIt=float *,
+              _Diff=int,
+              _Ty=int
           ]
   RayTracer.vcxproj -> C:\Users\Akira\Desktop\Proyectos\RayTracer\Debug\RayTracer.exe
