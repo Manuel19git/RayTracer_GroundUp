@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Eigen/Dense>
-#include "tuples.h"
+#include "Canvas.h"
 
 using namespace std;
 using namespace Eigen;
@@ -28,30 +28,24 @@ projectile tick(environment env, projectile bullet)
 
 int main()
 {
-    /*
+    Canvas canvas(900, 500);
+
     projectile myProj;
-    myProj.pos = Tuple(0,1,0,1);
-    myProj.vel = Tuple(1,1,0,0);
+    myProj.pos = myPoint(0,1,0);
+    myProj.vel = myVector(1, 1.8, 0).normalize() * 11.25f;
     
     environment env;
-    env.gravity = Tuple(0, -0.1, 0, 0);
-    env.wind = Tuple(-0.01, 0, 0, 0);
+    env.gravity = myVector(0, -0.1, 0);
+    env.wind = myVector(-0.01, 0, 0);
     
     while (myProj.pos.y > 0)
     {
         myProj = tick(env, myProj);
 
-        cout << "Bullet position: " << myProj.pos << endl;
-        cout << "Bullet velocity: " << myProj.vel << endl;
+        //Paint the pixel of projectile red
+        if (myProj.pos.x < canvas.width || myProj.pos.y > 0)
+            canvas.pixel_matrix[(int)myProj.pos.x][canvas.height - (int)myProj.pos.y] = Color(1, 0, 0);
     }
-    */
-
-    myVector a(1, 0, 0);
-    myVector b(0, 1, 0);
-
-    Color c1(1, 0.2, 0.4);
-    Color c2(0.9, 1, 0.1);
-
-    c1.x = 0.5;
-    cout << c1.r << endl;
+    
+    canvas.canvas_to_ppm();
 }

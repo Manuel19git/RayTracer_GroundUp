@@ -152,11 +152,12 @@ public:
 	Color()
 		: Tuple(0.0f, 0.0f, 0.0f, 1000), r(x), g(y), b(z)
 	{};
-	Color(float newR, float newG, float newB)
-		: Tuple(newR, newG, newB, 1000), r(x), g(y), b(z)
+	Color(float Red, float Green, float Blue)
+		: Tuple(Red, Green, Blue, 1000), r(x), g(y), b(z)
 	{};
 
 	//Assign operator
+	void operator=(const Color& tuple);
 	void operator=(const Tuple& tuple);
 
 	//Addition

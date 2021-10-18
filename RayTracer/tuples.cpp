@@ -169,9 +169,19 @@ myPoint myPoint::operator-(const myVector& vector)
 }
 
 //---------------Color--------------------
+void Color::operator=(const Color& color)
+{
+	if (color.w == 1000) //Its a color
+	{
+		x = color.x;
+		y = color.y;
+		z = color.z;
+	}
+}
+
 void Color::operator=(const Tuple& tuple)
 {
-	if (tuple.w == INFINITY) //Its a color
+	if (tuple.w == 1000) //Its a color
 	{
 		x = tuple.x;
 		y = tuple.y;
@@ -183,6 +193,7 @@ void Color::operator=(const Tuple& tuple)
 	}
 
 }
+
 
 Color Color::operator+(const Color& otherColor)
 {
