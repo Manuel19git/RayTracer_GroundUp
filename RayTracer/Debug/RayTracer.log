@@ -1,0 +1,4 @@
+﻿  Main.cpp
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(52,26): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(53,26): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+  RayTracer.vcxproj -> C:\Users\Akira\Desktop\Proyectos\RayTracer\Debug\RayTracer.exe
