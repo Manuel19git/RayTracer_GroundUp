@@ -36,16 +36,26 @@ public:
 	}
 
 	//output matrix operation
-	friend ostream& operator<<(ostream& out, MyMatrix& matrix);
+	friend ostream& operator<<(ostream& out, const MyMatrix& matrix);
 
 	//Access operator (return pointer will allow for insertion as well)
-	float& operator()(const int r, const int c);
+	float& operator()(int r, int c);
 
 	//Size
 	float getSize()
 	{
 		return colSize * rowSize;
 	}
+
+	//Assign operator
+	MyMatrix& operator=(MyMatrix& otherMatrix);
+
+	//Comparing matrix
+	bool operator== (MyMatrix otherMatrix);
+	bool operator!= (MyMatrix otherMatrix);
+
+	//Multiplication
+	MyMatrix operator*(const MyMatrix& otherMatrix);
 
 	int colSize;
 	int rowSize;

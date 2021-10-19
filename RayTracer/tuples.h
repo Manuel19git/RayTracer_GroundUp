@@ -78,6 +78,9 @@ float dot(Tuple a, Tuple b);
 //Cross product
 Tuple cross(Tuple a, Tuple b);
 
+//Equal floating point numbers
+bool equalFloat(float a, float b);
+
 
 //------------------------Subclass Vector------------------------
 class myVector : public Tuple

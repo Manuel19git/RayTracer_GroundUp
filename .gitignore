@@ -1,4 +1,6 @@
 #ignore large files in visual studio
+Debug/
+RayTracer/Debug/
 .vs/
 *.ipch
 # Files built by Visual Studio

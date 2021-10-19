@@ -242,3 +242,11 @@ Color Color::hadamard_product(Color c1, Color c2)
 
 	return result;
 }
+
+bool equalFloat(float a, float b)
+{
+	const float epsilon = 0.00001;
+
+	if (abs(a - b) < epsilon) return true;
+	else return false;
+}
