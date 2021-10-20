@@ -55,10 +55,101 @@ public:
 	bool operator== (MyMatrix otherMatrix);
 	bool operator!= (MyMatrix otherMatrix);
 
+	//Scalar multiplication
+	template<typename T>
+	MyMatrix operator*(T const& scalar)
+	{
+		MyMatrix resultMatrix(rowSize, colSize);
+
+		for (int r = 0; r < rowSize; ++r)
+		{
+			for (int c = 0; c < colSize; ++c)
+			{
+				resultMatrix(r, c) = matrix[r][c] * scalar;
+			}
+		}
+		return resultMatrix;
+	}
+	//Scalar division
+	template<typename T>
+	MyMatrix operator/(T const& scalar)
+	{
+		MyMatrix resultMatrix(rowSize, colSize);
+
+		for (int r = 0; r < rowSize; ++r)
+		{
+			for (int c = 0; c < colSize; ++c)
+			{
+				resultMatrix(r, c) = matrix[r][c] / scalar;
+			}
+		}
+		return resultMatrix;
+	}
+
 	//Multiplication
 	MyMatrix operator*(const MyMatrix& otherMatrix);
+
+	//Tuple multiplication
+	Tuple operator*(const Tuple& otherTuple);
+
+	
 
 	int colSize;
 	int rowSize;
 	float** matrix;
 };
+
+//Non class members
+//Scalar multiplication
+template<typename T>
+MyMatrix operator*(T const& scalar, MyMatrix matrix)
+{
+	MyMatrix resultMatrix(matrix.rowSize, matrix.colSize);
+
+	for (int r = 0; r < matrix.rowSize; ++r)
+	{
+		for (int c = 0; c < matrix.colSize; ++c)
+		{
+			resultMatrix(r, c) = matrix(r, c) * scalar;
+		}
+	}
+	return resultMatrix;
+}
+//Scalar division
+template<typename T>
+MyMatrix operator/(T const& scalar, MyMatrix matrix)
+{
+	MyMatrix resultMatrix(matrix.rowSize, matrix.colSize);
+
+	for (int r = 0; r < matrix.rowSize; ++r)
+	{
+		for (int c = 0; c < matrix.colSize; ++c)
+		{
+			resultMatrix(r, c) = scalar / matrix(r, c);
+		}
+	}
+}
+
+//Identity matrix
+MyMatrix I_Matrix();
+
+//Transposing matrices
+MyMatrix transpose(MyMatrix matrix);
+
+//Return determinant of a matrix
+float determinant(MyMatrix matrix);
+
+//Return submatrix deleting row and column of selected cell
+MyMatrix submatrix(MyMatrix matrix, int row, int col);
+
+//Minor -> determinant of cell submatrix of a matrix
+float minor(MyMatrix matrix, int row, int col);
+
+//Cofactor of a matrix
+float cofactor(MyMatrix matrix, int row, int col);
+
+//Check if a matrix is invertible
+bool isInvertible(MyMatrix matrix);
+
+//Return the inverse of a matrix
+MyMatrix inverse(MyMatrix matrix);
