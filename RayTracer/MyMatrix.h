@@ -26,6 +26,7 @@ public:
 	}
 
 	//Destructor
+	/*
 	~MyMatrix()
 	{
 		for (int r = 0; r < rowSize; ++r)
@@ -34,7 +35,7 @@ public:
 		}
 		delete matrix;
 	}
-
+	*/
 	//output matrix operation
 	friend ostream& operator<<(ostream& out, const MyMatrix& matrix);
 

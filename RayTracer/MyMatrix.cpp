@@ -88,5 +88,6 @@ MyMatrix MyMatrix::operator*(const MyMatrix& otherMatrix)
 
 		}
 	}
+
 	return resultMatrix;
 }
