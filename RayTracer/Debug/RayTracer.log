@@ -23,7 +23,7 @@ C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.h(16): message : V
               _Diff=int,
               _Ty=int
           ]
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\tuples.h(34,54): warning C4244: 'argumento': conversión de 'T' a 'int'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\tuples.h(42,54): warning C4244: 'argumento': conversión de 'T' a 'int'; posible pérdida de datos
           with
           [
               T=float

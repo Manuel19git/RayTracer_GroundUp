@@ -15,7 +15,15 @@ public:
 	Tuple(float newX, float newY, float newZ, int newW): x(newX), y(newY), z(newZ), w(newW) {}
 
 	//Operations
+	//Output
 	friend ostream& operator<<(ostream& out, const Tuple& tuple);
+
+	//Assign operator
+	void operator=(const Tuple& tuple);
+
+	//Comparison operators
+	bool operator==(const Tuple& tuple);
+	bool operator!=(const Tuple& tuple);
 
 	//Addition
 	Tuple operator+(const Tuple& tuple);
@@ -104,6 +112,7 @@ public:
 
 	//Assign operator
 	void operator=(const Tuple& tuple);
+	
 
 	//Operations
 	//Addition

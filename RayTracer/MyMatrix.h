@@ -49,42 +49,13 @@ public:
 	}
 
 	//Assign operator
-	MyMatrix& operator=(MyMatrix& otherMatrix);
+	MyMatrix operator=(MyMatrix& otherMatrix);
+	//Assign operator
+	MyMatrix operator=(MyMatrix otherMatrix);
 
 	//Comparing matrix
 	bool operator== (MyMatrix otherMatrix);
 	bool operator!= (MyMatrix otherMatrix);
-
-	//Scalar multiplication
-	template<typename T>
-	MyMatrix operator*(T const& scalar)
-	{
-		MyMatrix resultMatrix(rowSize, colSize);
-
-		for (int r = 0; r < rowSize; ++r)
-		{
-			for (int c = 0; c < colSize; ++c)
-			{
-				resultMatrix(r, c) = matrix[r][c] * scalar;
-			}
-		}
-		return resultMatrix;
-	}
-	//Scalar division
-	template<typename T>
-	MyMatrix operator/(T const& scalar)
-	{
-		MyMatrix resultMatrix(rowSize, colSize);
-
-		for (int r = 0; r < rowSize; ++r)
-		{
-			for (int c = 0; c < colSize; ++c)
-			{
-				resultMatrix(r, c) = matrix[r][c] / scalar;
-			}
-		}
-		return resultMatrix;
-	}
 
 	//Multiplication
 	MyMatrix operator*(const MyMatrix& otherMatrix);
@@ -92,7 +63,12 @@ public:
 	//Tuple multiplication
 	Tuple operator*(const Tuple& otherTuple);
 
+	//Scalar multiplication
+	MyMatrix operator*(float const& scalar);
 	
+	//Scalar division
+	MyMatrix operator/(float const& scalar);
+
 
 	int colSize;
 	int rowSize;
@@ -153,3 +129,10 @@ bool isInvertible(MyMatrix matrix);
 
 //Return the inverse of a matrix
 MyMatrix inverse(MyMatrix matrix);
+
+//------------------Transform operations------------------
+//Translation
+MyMatrix translation(int x, int y, int z);
+
+//Scaling
+MyMatrix scaling(int x, int y, int z);

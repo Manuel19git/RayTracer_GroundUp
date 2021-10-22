@@ -84,21 +84,78 @@ void inverseTest()
         cout << "DISTINTOS";
 }
 
+void testTransformation()
+{
+    const char* test;
+    //Multiplying by a translation matrix
+    test = "Multiplying by a translation matrix";
+    MyMatrix transform = translation(5, -3, 2);
+    myPoint p(-3,4,5);
+    if (transform * p == myPoint(2, 1, 7))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Multiplying by the inverse of a translation matrix
+    test = "Multiplying by the inverse of a translation matrix";
+    MyMatrix inv = inverse(transform);
+    if (inv * p == myPoint(-8, 7, 3))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Translation does not affect vectors
+    test = "Translation does not affect vectors";
+    myVector v(-3, 4, 5);
+    if (v == transform * v)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A scaling matrix applied to a point
+    test = "A scaling matrix applied to a point";
+    transform = scaling(2, 3, 4);
+    p = myPoint(-4, 6, 8);
+    if (transform * p == myPoint(-8, 18, 32))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A scaling matrix applied to a vector
+    test = "A scaling matrix applied to a vector";
+    v = myVector(-4, 6, 8);
+    if (transform * v == myVector(-8, 18, 32))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Multiplying by the inverse of a scaling matrix
+    test = "Multiplying by the inverse of a scaling matrix";
+    inv = inverse(transform);
+    if (inv * v == myVector(-2, 2, 2))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Reflection is scaling by a negative value
+    test = "Reflection is scaling by a negative value";
+    transform = scaling(-1, 1, 1);
+    p = myPoint(2, 3, 4);
+    if (transform * p == myPoint(-2, 3, 4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+}
+
 
 
 int main()
 {
     //launchTest();
 
-    MyMatrix m1(4);
+    testTransformation();
 
-    m1(0, 0) = 3; m1(0, 1) = -9; m1(0, 2) = 7; m1(0, 3) = 3;
-    m1(1, 0) = 3; m1(1, 1) = -8; m1(1, 2) = 2; m1(1, 3) = -9;
-    m1(2, 0) = -4; m1(2, 1) = 4; m1(2, 2) = 4; m1(2, 3) = 1;
-    m1(3, 0) = -6; m1(3, 1) = 5; m1(3, 2) = -1; m1(3, 3) = 1;
-
-    MyMatrix I = I_Matrix();
-    Tuple tuple(1, 2, 3, 1);
 
     return 0;
 }

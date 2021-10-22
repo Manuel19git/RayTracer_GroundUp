@@ -28,7 +28,20 @@ float& MyMatrix::operator()(int r, int c)
 }
 
 //Assign operator of regular matrices of the same size
-MyMatrix& MyMatrix::operator=(MyMatrix& otherMatrix)
+MyMatrix MyMatrix::operator=(MyMatrix& otherMatrix)
+{
+	rowSize = otherMatrix.rowSize;
+	colSize = otherMatrix.colSize;
+
+	for (int r = 0; r < rowSize; ++r) {
+		for (int c = 0; c < colSize; ++c) {
+			matrix[r][c] = otherMatrix(r, c);
+		}
+	}
+	return *this;
+}
+
+MyMatrix MyMatrix::operator=(MyMatrix otherMatrix)
 {
 	rowSize = otherMatrix.rowSize;
 	colSize = otherMatrix.colSize;
@@ -119,7 +132,35 @@ Tuple MyMatrix::operator*(const Tuple& otherTuple)
 
 	return resultTuple;
 }
+//Scalar multiplication
+MyMatrix MyMatrix::operator*(float const& scalar)
+{
+	MyMatrix resultMatrix(rowSize, colSize);
 
+	for (int r = 0; r < rowSize; ++r)
+	{
+		for (int c = 0; c < colSize; ++c)
+		{
+			resultMatrix(r, c) = matrix[r][c] * scalar;
+		}
+	}
+	return resultMatrix;
+}
+
+//Scalar division
+MyMatrix MyMatrix::operator/(float const& scalar)
+{
+	MyMatrix resultMatrix(rowSize, colSize);
+
+	for (int r = 0; r < rowSize; ++r)
+	{
+		for (int c = 0; c < colSize; ++c)
+		{
+			resultMatrix(r, c) = matrix[r][c] / scalar;
+		}
+	}
+	return resultMatrix;
+}
 
 //Non member functions
 //Identity Matrix
@@ -198,7 +239,11 @@ MyMatrix submatrix(MyMatrix matrix, int row, int col)
 
 	}
 	else
-		return MyMatrix(0);
+	{
+		MyMatrix zero(0);
+		return zero;
+	}
+
 		
 }
 
@@ -233,7 +278,8 @@ MyMatrix inverse(MyMatrix matrix)
 	if (!isInvertible(matrix))
 	{
 		printf("Matrix not invertible!\n");
-		return MyMatrix(0);
+		MyMatrix zero(0);
+		return zero;
 	}
 		
 	else
@@ -254,4 +300,31 @@ MyMatrix inverse(MyMatrix matrix)
 		}
 		return inverse_matrix;
 	}
+}
+
+//------------------Transform operations------------------
+//Translation
+MyMatrix translation(int x, int y, int z)
+{
+	//Create 4x4 Identity matrix
+	MyMatrix transform = I_Matrix();
+
+	transform(0, 3) = x;
+	transform(1, 3) = y;
+	transform(2, 3) = z;
+
+	return transform;
+}
+
+//Scaling
+MyMatrix scaling(int x, int y, int z)
+{
+	//Create 4x4 Identity matrix
+	MyMatrix transform = I_Matrix();
+
+	transform(0, 0) = x;
+	transform(1, 1) = y;
+	transform(2, 2) = z;
+
+	return transform;
 }

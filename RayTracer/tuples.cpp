@@ -18,7 +18,28 @@ ostream& operator<<(ostream& out, const Tuple& tuple)
 	return out;
 }
 
+
+
 //---------------Tuple--------------------
+void Tuple::operator=(const Tuple& tuple)
+{
+	x = tuple.x;
+	y = tuple.y;
+	z = tuple.z;
+	w = tuple.w;
+
+}
+
+bool Tuple::operator==(const Tuple& tuple)
+{
+	return (equalFloat(x, tuple.x) && equalFloat(y, tuple.y) && equalFloat(z, tuple.z) && equalFloat(w, tuple.w));
+}
+bool Tuple::operator!=(const Tuple& tuple)
+{
+	bool equal = *this == tuple;
+	return !equal;
+}
+
 Tuple Tuple::operator+(const Tuple& otherTuple)
 {
 	Tuple result;
