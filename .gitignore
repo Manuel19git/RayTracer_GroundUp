@@ -3,6 +3,8 @@ Debug/
 RayTracer/Debug/
 .vs/
 *.ipch
+*.ppm
+*.ppm#
 # Files built by Visual Studio
 *_i.c
 *_p.c

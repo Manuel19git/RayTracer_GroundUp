@@ -146,16 +146,144 @@ void testTransformation()
     else
         printf("%s: TEST FAILED\n", test);
 
+    //Rotating a point around the x axis
+    test = "Rotating a point around the x axis";
+    p = myPoint(0, 1, 0);
+    MyMatrix half_quarter = rotation_x(PI / 4);
+    MyMatrix full_quarter = rotation_x(PI / 2);
+    if (half_quarter * p == myPoint(0, sqrt(2) / 2, sqrt(2) /2) && full_quarter * p == myPoint(0,0,1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The inverse of an x-rotation rotates in the opposite direction
+    test = "The inverse of an x-rotation rotates in the opposite direction";
+    inv = inverse(half_quarter);
+    if (inv * p == myPoint(0, sqrt(2) / 2, -sqrt(2) / 2))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Rotating a point around the y axis
+    test = "Rotating a point around the y axis";
+    p = myPoint(0, 0, 1);
+    half_quarter = rotation_y(PI / 4);
+    full_quarter = rotation_y(PI / 2);
+    if (half_quarter * p == myPoint(sqrt(2) / 2, 0, sqrt(2) / 2) && full_quarter * p == myPoint(1, 0, 0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Rotating a point around the z axis
+    test = "Rotating a point around the z axis";
+    p = myPoint(0, 1, 0);
+    half_quarter = rotation_z(PI / 4);
+    full_quarter = rotation_z(PI / 2);
+    if (half_quarter * p == myPoint(-sqrt(2) / 2, sqrt(2) / 2, 0) && full_quarter * p == myPoint(-1, 0, 0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves x in proportion to y
+    test = "A shearing transformation moves x in proportion to y";
+    transform = shearing(1, 0, 0, 0, 0, 0);
+    p = myPoint(2, 3, 4);
+    if (transform * p == myPoint(5,3,4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves x in proportion to z
+    test = "A shearing transformation moves x in proportion to z";
+    transform = shearing(0, 1, 0, 0, 0, 0);
+    if (transform * p == myPoint(6, 3, 4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves y in proportion to x
+    test = "A shearing transformation moves y in proportion to x";
+    transform = shearing(0, 0, 1, 0, 0, 0);
+    if (transform * p == myPoint(2, 5, 4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves y in proportion to z
+    test = "A shearing transformation moves y in proportion to z";
+    transform = shearing(0, 0, 0, 1, 0, 0);
+    if (transform * p == myPoint(2, 7, 4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves z in proportion to x
+    test = "A shearing transformation moves z in proportion to x";
+    transform = shearing(0, 0, 0, 0, 1, 0);
+    if (transform * p == myPoint(2, 3, 6))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A shearing transformation moves z in proportion to y
+    test = "A shearing transformation moves z in proportion to y";
+    transform = shearing(0, 0, 0, 0, 0, 1);
+    if (transform * p == myPoint(2, 3, 7))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Individual transformations vs chained transformations
+    test = "Individual transformations are applied in sequence";
+    p = myPoint(1, 0, 1);
+    MyMatrix A = rotation_x(PI / 2);
+    MyMatrix B = scaling(5, 5, 5);
+    MyMatrix C = translation(10, 5, 7);
+    myPoint p1, p2, p3, p3_c;
+    p1 = A * p;
+    p2 = B * p1;
+    p3 = C * p2;
+    p3_c = C * B * A * p;
+    if (p3 == myPoint(15, 0, 7) && p3_c == p3)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+   
 }
 
+//Paint with pixel each number of a clock
+void clockTest()
+{
+    Canvas canvas(900, 500);
+
+    myPoint origin, point;
+    MyMatrix clockHand = translation(0, 10, 0);
+    MyMatrix T = translation(450, 250, 0);
+    float step = PI / 6;
+    float radians = 0;
+    
+    //First pixel outside the loop
+    for (int i = 0; i < 12; ++i)
+    {
+        point = T * rotation_z(radians) * clockHand * origin;
+
+        canvas.pixel_matrix[(int)point.x][(int)point.y] = Color(1, 1, 1);
+
+        radians += step;
+    }
+    
+
+    canvas.canvas_to_ppm();
+}
 
 
 int main()
 {
     //launchTest();
 
-    testTransformation();
+    //testTransformation();
 
+    clockTest();
 
     return 0;
 }

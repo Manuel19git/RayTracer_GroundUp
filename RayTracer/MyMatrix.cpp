@@ -163,7 +163,7 @@ MyMatrix MyMatrix::operator/(float const& scalar)
 }
 
 //Non member functions
-//Identity Matrix
+//4x4 Identity Matrix
 MyMatrix I_Matrix()
 {
 	MyMatrix identity(4);
@@ -303,7 +303,7 @@ MyMatrix inverse(MyMatrix matrix)
 }
 
 //------------------Transform operations------------------
-//Translation
+//4x4 Translation
 MyMatrix translation(int x, int y, int z)
 {
 	//Create 4x4 Identity matrix
@@ -316,7 +316,7 @@ MyMatrix translation(int x, int y, int z)
 	return transform;
 }
 
-//Scaling
+//4x4 Scaling
 MyMatrix scaling(int x, int y, int z)
 {
 	//Create 4x4 Identity matrix
@@ -325,6 +325,56 @@ MyMatrix scaling(int x, int y, int z)
 	transform(0, 0) = x;
 	transform(1, 1) = y;
 	transform(2, 2) = z;
+
+	return transform;
+}
+
+//4x4 Rotation matrix in x-axis
+MyMatrix rotation_x(float radians)
+{
+	MyMatrix transform = I_Matrix();
+	transform(1, 1) = cos(radians);
+	transform(1, 2) = -sin(radians);
+	transform(2, 1) = sin(radians);
+	transform(2, 2) = cos(radians);
+
+	return transform;
+}
+
+//4x4 Rotation matrix in y-axis
+MyMatrix rotation_y(float radians)
+{
+	MyMatrix transform = I_Matrix();
+	transform(0, 0) = cos(radians);
+	transform(0, 2) = sin(radians);
+	transform(2, 0) = -sin(radians);
+	transform(2, 2) = cos(radians);
+
+	return transform;
+}
+
+//4x4 Rotation matrix in z-axis
+MyMatrix rotation_z(float radians)
+{
+	MyMatrix transform = I_Matrix();
+	transform(0, 0) = cos(radians);
+	transform(0, 1) = -sin(radians);
+	transform(1, 0) = sin(radians);
+	transform(1, 1) = cos(radians);
+
+	return transform;
+}
+
+//4x4 Shearing
+MyMatrix shearing(float x_y, float x_z, float y_x, float y_z, float z_x, float z_y)
+{
+	MyMatrix transform = I_Matrix();
+	transform(0, 1) = x_y;
+	transform(0, 2) = x_z;
+	transform(1, 0) = y_x;
+	transform(1, 2) = y_z;
+	transform(2, 0) = z_x;
+	transform(2, 1) = z_y;
 
 	return transform;
 }

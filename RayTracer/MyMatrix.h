@@ -136,3 +136,15 @@ MyMatrix translation(int x, int y, int z);
 
 //Scaling
 MyMatrix scaling(int x, int y, int z);
+
+//Rotation matrix in x-axis
+MyMatrix rotation_x(float radians);
+
+//Rotation matrix in y-axis
+MyMatrix rotation_y(float radians);
+
+//Rotation matrix in z-axis
+MyMatrix rotation_z(float radians);
+
+//Shearing
+MyMatrix shearing(float x_y, float x_z, float y_x, float y_z, float z_x, float z_y);

@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 ostream& operator<<(ostream& out, const Tuple& tuple)
 {
 	if (tuple.w == 1)
@@ -27,7 +28,6 @@ void Tuple::operator=(const Tuple& tuple)
 	y = tuple.y;
 	z = tuple.z;
 	w = tuple.w;
-
 }
 
 bool Tuple::operator==(const Tuple& tuple)
@@ -99,6 +99,13 @@ Tuple cross(Tuple a, Tuple b)
 		0);
 }
 
+//Convert degrees to radians
+float deg2rad(float degrees)
+{
+
+	return (degrees * PI / 180.0f);
+}
+
 
 
 
@@ -111,6 +118,7 @@ void myVector::operator=(const Tuple& tuple)
 		x = tuple.x;
 		y = tuple.y;
 		z = tuple.z;
+		w = 0;
 	}
 	else
 	{
@@ -159,11 +167,20 @@ void myPoint::operator=(const Tuple& tuple)
 		x = tuple.x;
 		y = tuple.y;
 		z = tuple.z;
+		w = 1;
+
 	}
 	else
 	{
+		x = 0;
+		y = 0;
+		z = 0;
+		w = 1;
 		printf("Error: assign must be done with a point type tuple \n");
+		
 	}
+
+
 
 }
 

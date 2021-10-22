@@ -5,6 +5,8 @@
 using namespace Eigen;
 using namespace std;
 
+# define PI 3.14159265358979323846
+
 class Tuple
 {
 
@@ -88,6 +90,9 @@ Tuple cross(Tuple a, Tuple b);
 
 //Equal floating point numbers
 bool equalFloat(float a, float b);
+
+//Convert degrees to radians
+float deg2rad(float degrees);
 
 
 //------------------------Subclass Vector------------------------
