@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 #include "Canvas.h"
 #include "MyMatrix.h"
+#include "myRay.h"
 
 using namespace std;
 using namespace Eigen;
@@ -276,6 +277,382 @@ void clockTest()
     canvas.canvas_to_ppm();
 }
 
+void testRay()
+{
+    //Computing a point from a distance
+    const char* test = "Computing a point from a distance";
+    myPoint p(2, 3, 4);
+    myVector v(1, 0, 0);
+    myRay ray(p,v);
+    if (ray.position(0) == myPoint(2, 3, 4) && ray.position(1) == myPoint(3, 3, 4) && ray.position(-1) == myPoint(1, 3, 4) && ray.position(2.5) == myPoint(4.5, 3, 4))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A ray intersects a sphere at two points
+    test = "A ray intersects a sphere at two points";
+    p = myPoint(0, 0, -5);
+    v = myVector(0, 0, 1);
+    ray = myRay(p, v);
+    Sphere s = sphere();
+    Itr* xs = ray.intersect(s);
+    
+    if (xs[0].t == 4 && xs[1].t == 6)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A ray intersects a sphere at a tangent
+    test = "A ray intersects a sphere at a tangent";
+    ray = myRay(myPoint(0, 1, -5), v);
+    xs = ray.intersect(s);
+    if (xs[0].t == 5 && xs[1].t == 5)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A ray misses a sphere
+    test = "A ray misses a sphere";
+    ray = myRay(myPoint(0, 2, -5), v);
+    xs = ray.intersect(s);
+    if (xs[0].t == NULL)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A ray originates inside a sphereç
+    test = "A ray originates inside a sphere";
+    ray = myRay(myPoint(0, 0, 0), v);
+    xs = ray.intersect(s);
+    if (xs[0].t == -1 && xs[1].t == 1)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A sphere is behind a ray
+    test = "A sphere is behind a ray";
+    ray = myRay(myPoint(0, 0, 5), v);
+    xs = ray.intersect(s);
+    
+    if (xs[0].t == -6 && xs[1].t == -4)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Intersect sets the object on the intersection
+    test = "Intersect sets the object on the intersection";
+    if (xs[0].object == s && xs[1].object == s)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+
+    //The hit, when all intersections have positive t
+    test = "The hit, when all intersections have positive t";
+    Sphere s2 = sphere();
+    Itr i1, i2, i3, i4, i;
+    i1.t = 1; i1.object = s;
+    i2.t = 2; i2.object = s;
+    Itr interactions[] = { i1, i2 };
+    i = hit(interactions, 2);
+    
+    if (i == i1)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The hit, when some intersections have negative t
+    test = "The hit, when some intersections have negative t";
+    i1.t = -1; i1.object = s;
+    i2.t = 1; i2.object = s;
+    interactions[0] = i1;
+    interactions[1] = i2;
+    i = hit(interactions, 2);
+    if (i == i2)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The hit, when all intersections have negative t
+    test = "The hit, when all intersections have negative t";
+    i1.t = -1; i1.object = s;
+    i2.t = -1; i2.object = s;
+    interactions[0] = i1;
+    interactions[1] = i2;
+    i = hit(interactions, 2);
+    if (i.t == NULL)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The hit is always the lowest nonnegative intersection
+    test = "The hit is always the lowest nonnegative intersection";
+    i1.t = 5; i1.object = s;
+    i2.t = 7; i2.object = s;
+    i3.t = -3; i3.object = s;
+    i4.t = 2; i4.object = s;
+    Itr interactions4[] = { i1, i2, i3, i4 };
+    i = hit(interactions4, 4);
+    if (i == i4)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Translating a ray
+    test = "Translating a ray";
+    ray = myRay(myPoint(1, 2, 3), myVector(0, 1, 0));
+    MyMatrix m = translation(3,4,5);
+    myRay ray2 = ray.transform(m);
+    if (ray2.origin == myPoint(4,6,8) && ray2.direction == myVector(0,1,0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Scaling a ray
+    test = "Scaling a ray";
+    m = scaling(2, 3, 4);
+    ray2 = ray.transform(m);
+    if (ray2.origin == myPoint(2, 6, 12) && ray2.direction == myVector(0, 3, 0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Intersecting a scaled sphere with a ray
+    test = "Intersecting a scaled sphere with a ray";
+    ray = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
+    s.transform = scaling(2, 2, 2);
+    xs = ray.intersect(s);
+    if (xs[0].t == 3 && xs[1].t == 7)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Intersecting a translated sphere with a ray
+    test = "Intersecting a translated sphere with a ray";
+    s.transform = translation(5, 0, 0);
+    xs = ray.intersect(s);
+    if (xs[0].t == NULL)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+}
+
+void testSphere()
+{
+    Canvas canvas(100, 100);
+    Sphere s = sphere();
+
+    //s.transform = shearing(1, 0, 0, 0, 0, 0) * scaling(0.5, 1, 1);
+
+    myVector direction = myVector(0, 0, -1);
+    myRay ray = myRay(myPoint(0,0,-5), direction);
+    myRay r;
+    float wall_z = 10;
+    float wall_size = 7;
+    float pixel_size = wall_size / canvas.width;
+    float half = wall_size / 2;
+    float world_y, world_x;
+
+    Itr* its;
+    Itr i;
+    for (int y = 0; y < canvas.height; ++y)
+    {
+        world_y = half - pixel_size * y;
+        for(int x = 0; x < canvas.width; ++x)
+        {
+            world_x = -half + pixel_size * x;
+
+            myVector point = myPoint(world_x, world_y, wall_z) - ray.origin;
+            point = point.normalize();
+
+            r = myRay(ray.origin, point);
+            its = r.intersect(s);
+            i = hit(its, 2);
+
+            if (i.t != NULL) //A hit was registered
+                canvas.pixel_matrix[x][y] = Color(1, 0, 0);
+            else //Didnt hit
+                canvas.pixel_matrix[x][y] = Color(0, 0, 0);
+
+        }
+    }
+
+    canvas.canvas_to_ppm();
+}
+
+void testLighShading()
+{
+    //The normal on a sphere at a nonaxial point
+    const char* test = "The normal on a sphere at a nonaxial point";
+    Sphere s = sphere();
+    myVector n = normal_at(s, myPoint(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3));
+    if (n == myVector(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+
+    //Computing the normal on a translated sphere
+    test = "Computing the normal on a translated sphere";
+    s.transform = translation(0, 1, 0);
+    n = normal_at(s, myPoint(0, 1.70711, -0.70711));
+    if (n == myVector(0, 0.70711, -0.70711))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Computing the normal on a transformed sphere
+    test = "Computing the normal on a transformed sphere";
+    s.transform = scaling(1, 0.5, 1) * rotation_z(PI / 5);
+    n = normal_at(s, myPoint(0, sqrt(2) / 2, -sqrt(2) / 2));
+    if (n == myVector(0, 0.97014, -0.24254))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Reflecting a vector approaching at 45 degrees
+    test = "Reflecting a vector approaching at 45°";
+    myVector r = reflect(myVector(1, -1, 0), myVector(0, 1, 0));
+    if (r == myVector(1, 1, 0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Reflecting a vector off a slanted surface
+    test = "Reflecting a vector off a slanted surface";
+    r = reflect(myVector(0, -1, 0), myVector(sqrt(2) / 2, sqrt(2) / 2, 0));
+    if (r == myVector(1, 0, 0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+
+    //Lightning
+    Material m = material();
+    myPoint position = myPoint(0, 0, 0);
+    myVector eye, normal;
+    Light light;
+    Color result;
+
+    //Lighting with the eye between the light and the surface
+    test = "Lighting with the eye between the light and the surface";
+    eye = myVector(0, 0, -1);
+    normal = myVector(0, 0, -1);
+    light.position = myPoint(0, 0, -10);
+    light.intensity = Color(1, 1, 1);
+    result = lighting(m, light, position, eye, normal);
+    
+    if (result == Color(1.9, 1.9, 1.9))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Lighting with the eye between light and surface, eye offset 45 degrees
+    test = "Lighting with the eye between light and surface, eye offset 45 degrees";
+    eye = myVector(0, sqrt(2) / 2, -sqrt(2) / 2);
+    normal = myVector(0, 0, -1);
+    result = lighting(m, light, position, eye, normal);
+    if (result == Color(1.0, 1.0, 1.0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Lighting with eye opposite surface, light offset 45 degrees
+    test = "Lighting with eye opposite surface, light offset 45 degrees";
+    eye = myVector(0, 0, -1);
+    normal = myVector(0, 0, -1);
+    light.position = myPoint(0, 10, -10);
+    result = lighting(m, light, position, eye, normal);
+    
+    if (result == Color(0.7364, 0.7364, 0.7364))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Lighting with eye in the path of the reflection vector
+    test = "Lighting with eye in the path of the reflection vector";
+    eye = myVector(0, -sqrt(2) / 2, -sqrt(2) / 2);
+    normal = myVector(0, 0, -1);
+    light.position = myPoint(0, 10, -10);
+    result = lighting(m, light, position, eye, normal);
+    if (result == Color(1.6364, 1.6364, 1.6364))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Lighting with the light behind the surface
+    test = "Lighting with the light behind the surface";
+    eye = myVector(0, 0, -1);
+    normal = myVector(0, 0, -1);
+    light.position = myPoint(0, 0, 10);
+    result = lighting(m, light, position, eye, normal);
+    if (result == Color(0.1, 0.1, 0.1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+}
+
+void testSphereShading()
+{
+    //Creation of canvas
+    Canvas canvas(100, 100);
+
+    //Defining sphere and material
+    Sphere s = sphere();
+    s.material = material();
+    s.material.color = Color(1, 0.2, 1);
+    //s.transform = shearing(1, 0, 0, 0, 0, 0) * scaling(0.5, 1, 1);
+
+    //Define light
+    Light l = light();
+    l.position = myPoint(-10, 10, -10);
+    l.intensity = Color(1, 1, 1);
+
+    //Define ray
+    myVector direction = myVector(0, 0, -1);
+    myRay ray = myRay(myPoint(0, 0, -5), direction);
+    myRay r;
+
+    //Define wall where we are going to draw circle
+    float wall_z = 10;
+    float wall_size = 7;
+    float pixel_size = wall_size / canvas.width;
+    float half = wall_size / 2;
+    float world_y, world_x;
+
+    Itr* its;
+    Itr i;
+    for (int y = 0; y < canvas.height; ++y)
+    {
+        world_y = half - pixel_size * y;
+        for (int x = 0; x < canvas.width; ++x)
+        {
+            world_x = -half + pixel_size * x;
+
+            myVector point = myPoint(world_x, world_y, wall_z) - ray.origin;
+            point = point.normalize();
+
+            r = myRay(ray.origin, point);
+            its = r.intersect(s);
+            i = hit(its, 2);
+
+            if (i.t != NULL) //A hit was registered
+            {
+                myPoint p = r.position(i.t);
+                myVector normal = normal_at(i.object, p);
+                myVector eye = -r.direction;
+                Color color = lighting(i.object.material, l, p, eye, normal);
+                canvas.pixel_matrix[x][y] = color;
+            }
+                
+            else //Didnt hit
+                canvas.pixel_matrix[x][y] = Color(0, 0, 0);
+
+        }
+    }
+
+    canvas.canvas_to_ppm();
+}
 
 int main()
 {
@@ -283,7 +660,15 @@ int main()
 
     //testTransformation();
 
-    clockTest();
+    //clockTest();
+
+    //testRay();
+
+    //testSphere();
+
+    //testLighShading();
+
+    testSphereShading();
 
     return 0;
 }

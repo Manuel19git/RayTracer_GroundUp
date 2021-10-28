@@ -149,6 +149,22 @@ myVector myVector::operator-(const myVector& vector)
 
 	return result;
 }
+myVector myVector::operator-(const Tuple& tuple)
+{
+	myVector result;
+
+	result.x = x - tuple.x;
+	result.y = y - tuple.y;
+	result.z = z - tuple.z;
+
+	return result;
+}
+
+//Negative
+myVector myVector::operator-()
+{
+	return myVector(-x, -y, -z);
+}
 
 
 myVector cross(myVector a, myVector b)
@@ -283,8 +299,7 @@ Color Color::hadamard_product(Color c1, Color c2)
 
 bool equalFloat(float a, float b)
 {
-	const float epsilon = 0.00001;
-
+	const float epsilon = 0.0001;
 	if (abs(a - b) < epsilon) return true;
 	else return false;
 }

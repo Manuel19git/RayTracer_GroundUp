@@ -123,7 +123,11 @@ public:
 	//Addition
 	myVector operator+(const myVector& tuple);
 	//Substraction
-	myVector operator-(const myVector& tuple);
+	myVector operator-(const myVector& vector);
+	myVector operator-(const Tuple& vector);
+
+	//Negative
+	myVector operator-();
 
 };
 //Non member functions
@@ -168,10 +172,10 @@ public:
 	//Constructor: w  = 1000 temporal solution for differenciating color from vectors and points
 	Color()
 		: Tuple(0.0f, 0.0f, 0.0f, 1000), r(x), g(y), b(z)
-	{};
+	{}
 	Color(float Red, float Green, float Blue)
 		: Tuple(Red, Green, Blue, 1000), r(x), g(y), b(z)
-	{};
+	{}
 
 	//Assign operator
 	void operator=(const Color& tuple);

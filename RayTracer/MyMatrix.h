@@ -31,9 +31,9 @@ public:
 	{
 		for (int r = 0; r < rowSize; ++r)
 		{
-			delete matrix[r];
+			delete []matrix[r];
 		}
-		delete matrix;
+		delete []matrix;
 	}
 	*/
 	//output matrix operation
@@ -69,6 +69,14 @@ public:
 	//Scalar division
 	MyMatrix operator/(float const& scalar);
 
+	void remove()
+	{
+		for (int r = 0; r < rowSize; ++r)
+		{
+			delete[]matrix[r];
+		}
+		delete[]matrix;
+	}
 
 	int colSize;
 	int rowSize;
@@ -76,6 +84,7 @@ public:
 };
 
 //Non class members
+/*
 //Scalar multiplication
 template<typename T>
 MyMatrix operator*(T const& scalar, MyMatrix matrix)
@@ -105,7 +114,7 @@ MyMatrix operator/(T const& scalar, MyMatrix matrix)
 		}
 	}
 }
-
+*/
 //Identity matrix
 MyMatrix I_Matrix();
 
@@ -132,10 +141,10 @@ MyMatrix inverse(MyMatrix matrix);
 
 //------------------Transform operations------------------
 //Translation
-MyMatrix translation(int x, int y, int z);
+MyMatrix translation(float x, float y, float z);
 
 //Scaling
-MyMatrix scaling(int x, int y, int z);
+MyMatrix scaling(float x, float y, float z);
 
 //Rotation matrix in x-axis
 MyMatrix rotation_x(float radians);

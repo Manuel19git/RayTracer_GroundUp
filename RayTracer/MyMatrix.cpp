@@ -250,7 +250,10 @@ MyMatrix submatrix(MyMatrix matrix, int row, int col)
 //Minor -> determinant of submatrix
 float minor(MyMatrix matrix, int row, int col)
 {
-	return determinant(submatrix(matrix, row, col));
+	MyMatrix sub = submatrix(matrix, row, col);
+	float d = determinant(sub);
+	sub.remove();
+	return d;
 }
 
 //Cofactor of a 3x3 matrix
@@ -304,7 +307,7 @@ MyMatrix inverse(MyMatrix matrix)
 
 //------------------Transform operations------------------
 //4x4 Translation
-MyMatrix translation(int x, int y, int z)
+MyMatrix translation(float x, float y, float z)
 {
 	//Create 4x4 Identity matrix
 	MyMatrix transform = I_Matrix();
@@ -317,7 +320,7 @@ MyMatrix translation(int x, int y, int z)
 }
 
 //4x4 Scaling
-MyMatrix scaling(int x, int y, int z)
+MyMatrix scaling(float x, float y, float z)
 {
 	//Create 4x4 Identity matrix
 	MyMatrix transform = I_Matrix();
