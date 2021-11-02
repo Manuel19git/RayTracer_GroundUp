@@ -25,13 +25,17 @@ myPoint myRay::position(float t)
 }
 
 //Give values of intersection between ray and object
-Itr* myRay::intersect(Sphere& s)
+vector<Itr> myRay::intersect(Sphere& s)
 {
 	MyMatrix inv = inverse(s.transform);
 	myRay invRay = this->transform(inv);
 	//Itr xs[2] ----> Result ERROR(local - data segment or stack)
 	//Itr *xs = new Itr[2] ------> Result OK (dynamically allocated memory - heap)
-	Itr* xs = new Itr[2];
+	vector<Itr> xs;
+	Itr it1, it2;
+	xs.push_back(it1);
+	xs.push_back(it2);
+	
 	xs[0].object = s;
 	xs[1].object = s;
 	
@@ -189,24 +193,24 @@ Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal)
 
 //Non-member functions for ray
 //Generate an array of interactions
-Itr* intersections(Itr it1, Itr it2)
+vector<Itr> intersections(Itr it1, Itr it2)
 {
-	Itr xs[2];
+	vector<Itr> xs;
 
-	xs[0] = it1;
-	xs[1] = it2;
+	xs.push_back(it1);
+	xs.push_back(it2);
 
 	return xs;
 }
 
 //Returns the closest valid intersection
-Itr hit(Itr* xs, int size)
+Itr hit(vector<Itr> xs)
 {
 	
 	int id = -1;
 	float value = INFINITY;
 	
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < xs.size(); ++i)
 	{
 		if (xs[i].t > 0 && xs[i].t < value)
 		{

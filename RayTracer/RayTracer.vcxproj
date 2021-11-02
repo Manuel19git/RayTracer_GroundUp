@@ -144,12 +144,14 @@
     <ClCompile Include="MyMatrix.cpp" />
     <ClCompile Include="myRay.cpp" />
     <ClCompile Include="tuples.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas.h" />
     <ClInclude Include="MyMatrix.h" />
     <ClInclude Include="myRay.h" />
     <ClInclude Include="tuples.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

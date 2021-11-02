@@ -61,7 +61,7 @@ public:
 	myPoint position(float t);
 
 	//Return intersection between ray and object
-	Itr* intersect(Sphere& s);
+	vector<Itr> intersect(Sphere& s);
 
 	//Returns a new ray with transformation matrix applied
 	myRay transform(MyMatrix matrix);
@@ -91,10 +91,10 @@ Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal);
 
 //Non-member functions for ray
 //Generate an array of interactions
-Itr* intersections(Itr it1, Itr it2);
+vector<Itr> intersections(Itr it1, Itr it2);
 
 //Returns the closest valid intersection
-Itr hit(Itr* xs, int size);
+Itr hit(vector<Itr> xs);
 
 
 

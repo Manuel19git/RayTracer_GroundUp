@@ -1,8 +1,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include "Canvas.h"
-#include "MyMatrix.h"
-#include "myRay.h"
+#include "World.h"
 
 using namespace std;
 using namespace Eigen;
@@ -295,7 +294,7 @@ void testRay()
     v = myVector(0, 0, 1);
     ray = myRay(p, v);
     Sphere s = sphere();
-    Itr* xs = ray.intersect(s);
+    vector<Itr> xs = ray.intersect(s);
     
     if (xs[0].t == 4 && xs[1].t == 6)
         printf("%s: TEST PASSED\n", test);
@@ -353,8 +352,8 @@ void testRay()
     Itr i1, i2, i3, i4, i;
     i1.t = 1; i1.object = s;
     i2.t = 2; i2.object = s;
-    Itr interactions[] = { i1, i2 };
-    i = hit(interactions, 2);
+    vector<Itr> interactions = { i1, i2 };
+    i = hit(interactions);
     
     if (i == i1)
         printf("%s: TEST PASSED\n", test);
@@ -367,7 +366,7 @@ void testRay()
     i2.t = 1; i2.object = s;
     interactions[0] = i1;
     interactions[1] = i2;
-    i = hit(interactions, 2);
+    i = hit(interactions);
     if (i == i2)
         printf("%s: TEST PASSED\n", test);
     else
@@ -379,7 +378,7 @@ void testRay()
     i2.t = -1; i2.object = s;
     interactions[0] = i1;
     interactions[1] = i2;
-    i = hit(interactions, 2);
+    i = hit(interactions);
     if (i.t == NULL)
         printf("%s: TEST PASSED\n", test);
     else
@@ -391,8 +390,8 @@ void testRay()
     i2.t = 7; i2.object = s;
     i3.t = -3; i3.object = s;
     i4.t = 2; i4.object = s;
-    Itr interactions4[] = { i1, i2, i3, i4 };
-    i = hit(interactions4, 4);
+    vector<Itr> interactions4 = { i1, i2, i3, i4 };
+    i = hit(interactions4);
     if (i == i4)
         printf("%s: TEST PASSED\n", test);
     else
@@ -453,7 +452,7 @@ void testSphere()
     float half = wall_size / 2;
     float world_y, world_x;
 
-    Itr* its;
+    vector<Itr> its;
     Itr i;
     for (int y = 0; y < canvas.height; ++y)
     {
@@ -467,7 +466,7 @@ void testSphere()
 
             r = myRay(ray.origin, point);
             its = r.intersect(s);
-            i = hit(its, 2);
+            i = hit(its);
 
             if (i.t != NULL) //A hit was registered
                 canvas.pixel_matrix[x][y] = Color(1, 0, 0);
@@ -620,7 +619,7 @@ void testSphereShading()
     float half = wall_size / 2;
     float world_y, world_x;
 
-    Itr* its;
+    vector<Itr> its;
     Itr i;
     for (int y = 0; y < canvas.height; ++y)
     {
@@ -634,7 +633,7 @@ void testSphereShading()
 
             r = myRay(ray.origin, point);
             its = r.intersect(s);
-            i = hit(its, 2);
+            i = hit(its);
 
             if (i.t != NULL) //A hit was registered
             {
@@ -654,6 +653,23 @@ void testSphereShading()
     canvas.canvas_to_ppm();
 }
 
+void testWorld()
+{
+    World w;
+    
+
+    //Intersect a world with a ray
+    myRay r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
+    //Array -> vector of intersections
+    vector<Itr> xs = intersect_world(w, r);
+    const char* test = "Intersect a world with a ray";
+    cout << xs.size() << endl;
+    if (xs[0].t == 4 && xs[1].t == 4.5 && xs[2].t == 5.5 && xs[3].t == 6)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+}
+
 int main()
 {
     //launchTest();
@@ -668,7 +684,9 @@ int main()
 
     //testLighShading();
 
-    testSphereShading();
+    //testSphereShading();
+
+    testWorld();
 
     return 0;
 }
