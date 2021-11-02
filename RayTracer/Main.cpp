@@ -656,18 +656,143 @@ void testSphereShading()
 void testWorld()
 {
     World w;
-    
-
     //Intersect a world with a ray
+    const char* test = "Intersect a world with a ray";
     myRay r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
     //Array -> vector of intersections
     vector<Itr> xs = intersect_world(w, r);
-    const char* test = "Intersect a world with a ray";
-    cout << xs.size() << endl;
     if (xs[0].t == 4 && xs[1].t == 4.5 && xs[2].t == 5.5 && xs[3].t == 6)
         printf("%s: TEST PASSED\n", test);
     else
         printf("%s: TEST FAILED\n", test);
+
+    //The hit, when an intersection occurs on the outside
+    test = "The hit, when an intersection occurs on the outside";
+    Sphere shape = sphere();
+    Itr it;
+    it.t = 4; it.object = shape;
+    ItrComps comps = prepare_computations(it, r);
+    if (!comps.inside)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The hit, when an intersection occurs on the inside
+    test = "The hit, when an intersection occurs on the inside";
+    r.origin = myPoint(0, 0, 0);
+    it.t = 1;
+    comps = prepare_computations(it, r);
+    if (comps.point == myPoint(0,0,1) && comps.eye == myVector(0,0,-1) && comps.inside == true && comps.normal == myVector(0,0,-1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Shading an intersection
+    test = "Shading an intersection";
+    r.origin = myPoint(0, 0, -5);
+    it.t = 4; it.object = w.objects[0];
+    comps = prepare_computations(it, r);
+    Color color = shade_hit(w, comps);
+    if (color == Color(0.38066, 0.47583, 0.2855))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Shading an intersection from the inside
+    test = "Shading an intersection from the inside";
+    w._light = light();
+    w._light.position = myPoint(0, 0.25, 0);
+    w._light.intensity = Color(1, 1, 1);
+    r.origin = myPoint(0, 0, 0);
+    it.t = 0.5; it.object = w.objects[1];
+    comps = prepare_computations(it, r);
+    color = shade_hit(w, comps);
+
+    if (color == Color(0.90498, 0.90498, 0.90498))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The color when a ray misses
+    test = "The color when a ray misses";
+    r = myRay(myPoint(0, 0, -5), myVector(0, 1, 0));
+    color = color_at(w, r);
+    if (color == Color(0,0,0))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The color when a ray hits
+    World default_world;
+    test = "The color when a ray hits";
+    r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
+    color = color_at(default_world, r);
+    if (color == Color(0.38066, 0.47583, 0.2855))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The color with an intersection behind the ray
+    test = "The color with an intersection behind the ray";
+    Sphere* outer = &default_world.objects[0];
+    outer->material.ambient = 1;
+    Sphere* inner = &default_world.objects[1];
+    inner->material.ambient = 1;
+    r = myRay(myPoint(0, 0, 0.75), myVector(0, 0, -1));
+    color = color_at(default_world, r);
+    if (color == inner->material.color)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The transformation matrix for the default orientation
+    test = "The transformation matrix for the default orientation";
+    myPoint from = myPoint(0, 0, 0);
+    myPoint to = myPoint(0, 0, -1);
+    myVector up = myVector(0, 1, 0);
+    MyMatrix view = view_transform(from, to, up);
+    if (view == I_Matrix())
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //A view transformation matrix looking in positive z direction
+    test = "A view transformation matrix looking in positive z direction";
+    from = myPoint(0, 0, 0);
+    to = myPoint(0, 0, 1);
+    up = myVector(0, 1, 0);
+    view = view_transform(from, to, up);
+    if (view == scaling(-1, 1, -1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+    
+    //The view transformation moves the world
+    test = "The view transformation moves the world";
+    from = myPoint(0, 0, 8);
+    to = myPoint(0, 0, 0);
+    up = myVector(0, 1, 0);
+    view = view_transform(from, to, up);
+    if (view == translation(0, 0, -8))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //An arbitrary view transformation
+    test = "An arbitrary view transformation";
+    from = myPoint(1, 3, 2);
+    to = myPoint(4, -2, 8);
+    up = myVector(1, 1, 0);
+    view = view_transform(from, to, up);
+    MyMatrix m = I_Matrix();
+    m(0, 0) = -0.50709; m(0, 1) = 0.50709; m(0, 2) = 0.67612; m(0, 3) = -2.36643;
+    m(1, 0) = 0.76772; m(1, 1) = 0.60609; m(1, 2) = 0.12122; m(1, 3) = -2.82843;
+    m(2, 0) = -0.35857; m(2, 1) = 0.59761; m(2, 2) = -0.71714;
+    if (view == m)
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
 }
 
 int main()

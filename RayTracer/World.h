@@ -3,6 +3,8 @@
 #include "myRay.h"
 
 
+
+
 class World
 {
 public:
@@ -40,4 +42,13 @@ public:
 };
 
 //Checks if a ray intersects with anything on the specified world
-vector<Itr> intersect_world(World w, myRay r);
+vector<Itr> intersect_world(World world, myRay ray);
+
+//Precompute computation structure with intersection info
+ItrComps prepare_computations(Itr intersection, myRay ray);
+
+//Color of the intersection encapsulated in the given world
+Color shade_hit(World world, ItrComps comps);
+
+//Returns color of intersection by a ray in the given world
+Color color_at(World world, myRay ray);

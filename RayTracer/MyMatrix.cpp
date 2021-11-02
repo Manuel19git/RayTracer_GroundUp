@@ -305,6 +305,28 @@ MyMatrix inverse(MyMatrix matrix)
 	}
 }
 
+//View transform matrix
+MyMatrix view_transform(myPoint from, myPoint to, myVector up)
+{
+	myVector forward, up_n, left, true_up;
+	forward = to - from;
+	forward = forward.normalize();
+
+	up_n = up.normalize();
+
+	left = cross(forward, up_n);
+	//original up is an approximation, we have to calculate the true up
+	true_up = cross(left, forward);
+
+	//Construct matrix
+	MyMatrix view = I_Matrix();
+	view(0, 0) = left.x; view(0, 1) = left.y; view(0, 2) = left.z;
+	view(1, 0) = true_up.x; view(1, 1) = true_up.y; view(1, 2) = true_up.z;
+	view(2, 0) = -forward.x; view(2, 1) = -forward.y; view(2, 2) = -forward.z;
+
+	return view * translation(-from.x, -from.y, -from.z);
+}
+
 //------------------Transform operations------------------
 //4x4 Translation
 MyMatrix translation(float x, float y, float z)

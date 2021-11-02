@@ -62,6 +62,35 @@ vector<Itr> myRay::intersect(Sphere& s)
 	return xs;
 }
 
+
+//Precompute computation structure with intersection info
+ItrComps prepare_computations(Itr intersection, myRay ray)
+{
+	//Data structure
+	ItrComps comps;
+
+	//Intersection properties
+	comps.t = intersection.t;
+	comps.object = intersection.object;
+
+	//Usefull values
+	comps.point = ray.position(comps.t);
+	comps.eye = -ray.direction;
+
+	//we have to make sure to change the normal if the eye is inside the object
+	comps.normal = normal_at(comps.object, comps.point);
+	if (dot(comps.normal, comps.eye) < 0)
+	{
+		comps.inside = true;
+		comps.normal = -comps.normal;
+	}
+	else
+		comps.inside = false;
+
+	return comps;
+}
+
+
 //Returns a new ray with transformation matrix applied
 myRay myRay::transform(MyMatrix matrix)
 {

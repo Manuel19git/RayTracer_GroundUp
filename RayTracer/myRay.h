@@ -44,6 +44,20 @@ struct Itr
 	Sphere object;
 };
 
+//Computations (More Info about Intersections)
+struct ItrComps
+{
+	//Intersection info
+	float t;
+	Sphere object;
+
+	//Usefull values
+	myPoint point;
+	myVector eye;
+	myVector normal;
+	bool inside;
+};
+
 bool operator==(const Sphere& lhs, const Sphere& rhs);
 bool operator==(const Itr& lhs, const Itr& rhs);
 

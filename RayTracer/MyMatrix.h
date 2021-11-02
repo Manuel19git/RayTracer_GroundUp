@@ -139,6 +139,9 @@ bool isInvertible(MyMatrix matrix);
 //Return the inverse of a matrix
 MyMatrix inverse(MyMatrix matrix);
 
+//View transform matrix
+MyMatrix view_transform(myPoint from, myPoint to, myVector up);
+
 //------------------Transform operations------------------
 //Translation
 MyMatrix translation(float x, float y, float z);
