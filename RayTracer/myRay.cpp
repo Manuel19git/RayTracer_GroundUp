@@ -74,11 +74,14 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	comps.object = intersection.object;
 
 	//Usefull values
-	comps.point = ray.position(comps.t);
+	comps.point = ray.position(intersection.t);
 	comps.eye = -ray.direction;
-
+	
 	//we have to make sure to change the normal if the eye is inside the object
+	
+
 	comps.normal = normal_at(comps.object, comps.point);
+		
 	if (dot(comps.normal, comps.eye) < 0)
 	{
 		comps.inside = true;
@@ -147,24 +150,31 @@ myVector normal_at(Sphere object, myPoint worldPoint)
 	//Transform world coord to object coord
 	MyMatrix inv = inverse(object.transform);
 	objectPoint = inv * worldPoint;
-	
+
 	//Calculate normal of object (center of sphere is zero for now)
 	objectNormal = objectPoint - myPoint(0, 0, 0);
 
+	
 	//Transform object normal to world normal
 	MyMatrix trans = transpose(inv);
-	worldNormal = trans * objectNormal;
 
+	//First assing to tuple 
+	Tuple worldNormalTuple = trans * objectNormal;
+
+	
+	
 	//world normal w value to zero. Avoids problems later
-	worldNormal.w = 0;
+	worldNormalTuple.w = 0;
+	worldNormal = worldNormalTuple;
 
 	//Delete matrices
 	trans.remove();
 	inv.remove();
 
 	//Normalize result normal vector
+	
 	worldNormal = worldNormal.normalize();
-
+	
 	return worldNormal;
 }
 

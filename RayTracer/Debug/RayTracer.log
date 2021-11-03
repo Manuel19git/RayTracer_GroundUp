@@ -1,6 +1,99 @@
-﻿  MyMatrix.cpp
+﻿  Main.cpp
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(11,49): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(11,67): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(14,31): warning C4244: 'inicializando': conversión de 'float' a 'unsigned int'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Canvas.h(17,32): warning C4244: 'inicializando': conversión de 'float' a 'unsigned int'; posible pérdida de datos
 C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.h(48,18): warning C4244: 'return': conversión de 'int' a 'float'; posible pérdida de datos
-C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.cpp(130,29): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\World.h(19,1): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\World.h(20,1): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\World.h(21,1): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(39,36): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(42,38): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(43,36): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(153,46): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(154,46): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(155,61): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(155,48): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(163,53): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(163,39): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(171,37): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(172,37): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(173,61): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(173,45): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(181,37): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(182,37): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(183,59): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(183,46): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(240,35): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(263,24): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(488,73): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(488,60): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(488,47): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(489,57): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(489,44): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(489,31): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(498,50): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(499,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(506,57): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(507,55): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(507,41): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(508,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(523,67): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(523,54): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(545,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(552,45): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(552,31): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(567,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(574,46): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(574,32): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(578,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(589,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(603,39): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(697,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(712,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(731,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(789,23): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(789,42): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(789,61): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(789,81): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(790,22): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(790,41): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(790,60): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(790,80): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(791,23): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(791,42): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(791,62): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(799,39): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(800,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(807,32): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(808,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(815,32): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(825,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(832,36): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(834,91): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(834,74): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(841,30): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(848,8): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(860,43): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(862,45): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(866,68): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(866,89): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(866,113): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(870,68): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(870,89): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(870,113): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(878,46): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(879,34): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(880,35): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(885,45): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(886,33): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(887,34): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(891,51): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(891,79): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(892,44): warning C4305: 'argumento': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(893,32): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(894,33): warning C4305: '=': truncamiento de 'double' a 'float'
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(902,41): warning C4305: 'argumento': truncamiento de 'double' a 'float'
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\include\xutility(3865,27): warning C4244: '=': conversión de 'const _Ty' a '_Ty'; posible pérdida de datos
           with
           [
@@ -16,5 +109,15 @@ C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\MyMatrix.h(16): message : V
               _OutIt=float *,
               _Diff=int,
               _Ty=int
+          ]
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\tuples.h(45,54): warning C4244: 'argumento': conversión de 'T' a 'int'; posible pérdida de datos
+          with
+          [
+              T=float
+          ]
+C:\Users\Akira\Desktop\Proyectos\RayTracer\RayTracer\Main.cpp(39): message : Vea la referencia a la creación de una instancia de la función plantilla "Tuple Tuple::operator *<float>(const T &)" que se está compilando
+          with
+          [
+              T=float
           ]
   RayTracer.vcxproj -> C:\Users\Akira\Desktop\Proyectos\RayTracer\Debug\RayTracer.exe

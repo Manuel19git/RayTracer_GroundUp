@@ -10,6 +10,29 @@ bool comparisonItr(Itr a, Itr b)
 	return a.t < b.t;
 }
 
+//Sorting by method bubble
+void bubbleSort(vector<Itr> &xs)
+{
+	for (int i = 0; i < xs.size(); ++i)
+	{
+		for (int j = i + 1; j < xs.size(); ++j)
+		{
+			if (xs[j].t < xs[i].t)
+			{
+				Itr aux;
+				aux.t = xs[i].t;
+				aux.object = xs[i].object;
+
+				xs[i].t = xs[j].t;
+				xs[i].object = xs[j].object;
+
+				xs[j].t = aux.t;
+				xs[j].object = aux.object;
+			}
+		}
+	}
+}
+
 //Checks if a ray intersects with anything on the specified world
 vector<Itr> intersect_world(World world, myRay ray)
 {
@@ -18,12 +41,20 @@ vector<Itr> intersect_world(World world, myRay ray)
 	for (int i = 0; i < world.objects.size(); ++i)
 	{
 		//Check for intersection
+		
 		vector<Itr> auxXS = ray.intersect(world.objects[i]);
-		xs.push_back(auxXS[0]);
-		xs.push_back(auxXS[1]);
+
+		if (auxXS[0].t != NULL) //Dont enter interaction if didnt interact
+		{
+			xs.push_back(auxXS[0]);
+			xs.push_back(auxXS[1]);
+		}
+		
 	}
+	
 	//Sort result intersections in ascending order
-	sort(xs.begin(), xs.end(), comparisonItr);
+	//sort(xs.begin(), xs.end(), comparisonItr);
+	bubbleSort(xs);
 
 	return xs;
 }
@@ -42,14 +73,16 @@ Color color_at(World world, myRay ray)
 	//Find intersections
 	vector<Itr> its = intersect_world(world, ray);
 
+	
 	//Find the closest, real hit inside the intersections
 	Itr i = hit(its);
-
+	
 	//Return black if there is no hit
 	if (i.t == NULL)
 		return Color(0, 0, 0);
 	else
 	{
+		
 		//Precompute extra intersection values
 		ItrComps comps = prepare_computations(i, ray);
 
@@ -57,5 +90,7 @@ Color color_at(World world, myRay ray)
 		return shade_hit(world, comps);
 	}
 }
+
+
 
 

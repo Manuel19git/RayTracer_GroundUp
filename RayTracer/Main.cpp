@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include "Canvas.h"
+#include "Camera.h"
 #include "World.h"
 
 using namespace std;
@@ -793,6 +794,117 @@ void testWorld()
     else
         printf("%s: TEST FAILED\n", test);
 
+    //The pixel size for a horizontal canvas
+    test = "The pixel size for a horizontal canvas";
+    Camera c = Camera(200, 125, PI / 2);
+    if (equalFloat(c.pixel_size, 0.01))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The pixel size for a vertical canvas
+    test = "The pixel size for a vertical canvas";
+    c = Camera(125, 200, PI / 2);
+    if (equalFloat(c.pixel_size, 0.01))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Constructing a ray through the center of the canvas
+    test = "Constructing a ray through the center of the canvas";
+    c = Camera(201, 101, PI / 2);
+    r = c.ray_for_pixel(100, 50);
+    if (r.origin == myPoint(0,0,0) && r.direction == myVector(0,0,-1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Constructing a ray through a corner of the canvas
+    test = "Constructing a ray through a corner of the canvas";
+    r = c.ray_for_pixel(0, 0);
+    if (r.origin == myPoint(0, 0, 0) && r.direction == myVector(0.66519, 0.33259, -0.66851))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Constructing a ray when the camera is transformed
+    test = "Constructing a ray when the camera is transformed";
+    c.transform = rotation_y(PI / 4) * translation(0, -2, 5);
+    r = c.ray_for_pixel(100, 50);
+    if (r.origin == myPoint(0, 2, -5) && r.direction == myVector(sqrt(2) / 2, 0, -sqrt(2) / 2))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Rendering a world with a camera
+    test = "Rendering a world with a camera";
+    c = Camera(11, 11, PI / 2);
+    from = myPoint(0, 0, -5);
+    to = myPoint(0, 0, 0);
+    up = myVector(0, 1, 0);
+    c.transform = view_transform(from, to, up);
+    default_world = World();
+    Canvas canvas = c.render(default_world);
+    if (canvas.pixel_matrix[5][5] == Color(0.38066, 0.47583, 0.2855))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+}
+
+void testSceneShading()
+{
+    Sphere floor, left_wall, right_wall;
+
+    floor = sphere();
+    floor.transform = scaling(10, 0.01, 10);
+    floor.material = material();
+    floor.material.color = Color(1, 0.9, 0.9);
+    floor.material.specular = 0;
+
+    left_wall = sphere();
+    left_wall.transform = translation(0, 0, 5) * rotation_y(-PI / 4) * rotation_x(PI / 2) * scaling(10, 0.01, 10);
+    left_wall.material = floor.material;
+
+    right_wall = sphere();
+    right_wall.transform = translation(0, 0, 5) * rotation_y(PI / 4) * rotation_x(PI / 2) * scaling(10, 0.01, 10);
+    right_wall.material = floor.material;
+
+    Sphere middle, right, left;
+
+    middle = sphere();
+    middle.material = material();
+    middle.transform = translation(-0.5, 1, 0.5);
+    middle.material.color = Color(0.1, 1, 0.5);
+    middle.material.diffuse = 0.7;
+    middle.material.specular = 0.3;
+
+    right = sphere();
+    right.material = material();
+    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    right.material.color = Color(0.5, 1, 0.1);
+    right.material.diffuse = 0.7;
+    right.material.specular = 0.3;
+
+    left = sphere();
+    left.material = material();
+    left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    left.material.color = Color(1, 0.8, 0.1);
+    left.material.diffuse = 0.7;
+    left.material.specular = 0.3;
+
+    vector<Sphere> objects = {floor, left_wall, right_wall, middle, right, left};
+    Light l = light();
+    l.position = myPoint(-10, 10, -10);
+    
+    World world = World(objects, l);
+    
+    Camera cam = Camera(500, 250, PI / 3);
+    cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0,1,0), myVector(0,1,0));
+    
+    Canvas canvas = cam.render(world);
+    
+    canvas.canvas_to_ppm();
 }
 
 int main()
@@ -811,7 +923,9 @@ int main()
 
     //testSphereShading();
 
-    testWorld();
+    //testWorld();
+
+    testSceneShading();
 
     return 0;
 }
