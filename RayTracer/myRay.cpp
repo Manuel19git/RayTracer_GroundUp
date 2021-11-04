@@ -78,8 +78,6 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	comps.eye = -ray.direction;
 	
 	//we have to make sure to change the normal if the eye is inside the object
-	
-
 	comps.normal = normal_at(comps.object, comps.point);
 		
 	if (dot(comps.normal, comps.eye) < 0)
@@ -89,6 +87,11 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	}
 	else
 		comps.inside = false;
+
+	//Compute a slightly offset along normal point
+	//This is done to avoid floating point number errors when detecting if a point is shadowed
+	float epsilon = 0.1;
+	comps.over_point = comps.point + comps.normal * epsilon;
 
 	return comps;
 }
@@ -185,7 +188,7 @@ myVector reflect(myVector in, myVector normal)
 }
 
 //Returns color at a position
-Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal)
+Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal, bool inShadow)
 {
 	Color ambientColor, diffuseColor, specularColor;
 
@@ -203,7 +206,7 @@ Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal)
 	float light_dot_normal = dot(light_dir, normal);
 
 	
-	if (light_dot_normal < 0) //Light on other side of surface
+	if (light_dot_normal < 0 || inShadow) //Light on other side of surface
 	{
 		diffuseColor = Color(0, 0, 0);
 		specularColor = Color(0, 0, 0);

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include <Eigen/Dense>
 #include "Canvas.h"
 #include "Camera.h"
@@ -540,7 +541,8 @@ void testLighShading()
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 0, -10);
     light.intensity = Color(1, 1, 1);
-    result = lighting(m, light, position, eye, normal);
+    bool in_shadow = false;
+    result = lighting(m, light, position, eye, normal, in_shadow);
     
     if (result == Color(1.9, 1.9, 1.9))
         printf("%s: TEST PASSED\n", test);
@@ -551,7 +553,7 @@ void testLighShading()
     test = "Lighting with the eye between light and surface, eye offset 45 degrees";
     eye = myVector(0, sqrt(2) / 2, -sqrt(2) / 2);
     normal = myVector(0, 0, -1);
-    result = lighting(m, light, position, eye, normal);
+    result = lighting(m, light, position, eye, normal, in_shadow);
     if (result == Color(1.0, 1.0, 1.0))
         printf("%s: TEST PASSED\n", test);
     else
@@ -562,7 +564,7 @@ void testLighShading()
     eye = myVector(0, 0, -1);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 10, -10);
-    result = lighting(m, light, position, eye, normal);
+    result = lighting(m, light, position, eye, normal, in_shadow);
     
     if (result == Color(0.7364, 0.7364, 0.7364))
         printf("%s: TEST PASSED\n", test);
@@ -574,7 +576,7 @@ void testLighShading()
     eye = myVector(0, -sqrt(2) / 2, -sqrt(2) / 2);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 10, -10);
-    result = lighting(m, light, position, eye, normal);
+    result = lighting(m, light, position, eye, normal, in_shadow);
     if (result == Color(1.6364, 1.6364, 1.6364))
         printf("%s: TEST PASSED\n", test);
     else
@@ -585,7 +587,18 @@ void testLighShading()
     eye = myVector(0, 0, -1);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 0, 10);
-    result = lighting(m, light, position, eye, normal);
+    result = lighting(m, light, position, eye, normal, in_shadow);
+    if (result == Color(0.1, 0.1, 0.1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //Lighting with the surface in shadow
+    test = "Lighting with the surface in shadow";
+    light.position = myPoint(0, 0, -10);
+    light.intensity = Color(1, 1, 1);
+    in_shadow = true;
+    result = lighting(m, light, position, eye, normal, in_shadow);
     if (result == Color(0.1, 0.1, 0.1))
         printf("%s: TEST PASSED\n", test);
     else
@@ -641,7 +654,8 @@ void testSphereShading()
                 myPoint p = r.position(i.t);
                 myVector normal = normal_at(i.object, p);
                 myVector eye = -r.direction;
-                Color color = lighting(i.object.material, l, p, eye, normal);
+                bool in_shadow = false;
+                Color color = lighting(i.object.material, l, p, eye, normal, in_shadow);
                 canvas.pixel_matrix[x][y] = color;
             }
                 
@@ -850,6 +864,55 @@ void testWorld()
     else
         printf("%s: TEST FAILED\n", test);
 
+    //There is no shadow when nothing is collinear with point and light
+    test = "There is no shadow when nothing is collinear with point and light";
+    if(!is_shadowed(default_world, myPoint(0,10,0)))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //The shadow when an object is between the point and the light
+    test = "The shadow when an object is between the point and the light";
+    if (is_shadowed(default_world, myPoint(10, -10, 10)))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //There is no shadow when an object is behind the light
+    test = "There is no shadow when an object is behind the light";
+    if (!is_shadowed(default_world, myPoint(-20, 20, -20)))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //There is no shadow when an object is behind the point
+    test = "There is no shadow when an object is behind the point";
+    if (!is_shadowed(default_world, myPoint(-2, 2, -2)))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+    //shade_hit() is given an intersection in shadow
+    test = "shade_hit() is given an intersection in shadow";
+    Sphere s1 = sphere();
+    Sphere s2 = sphere();
+    s2.transform = translation(0, 0, 10);
+    vector<Sphere> objects = { s1, s2 };
+    Light l = light();
+    l.position = myPoint(0,0,-10);
+    l.intensity = Color(1,1,1);
+    w = World(objects,l);
+    r = myRay(myPoint(0, 0, 5), myVector(0, 0, 1));
+    it.t = 4; it.object = s2;
+    comps = prepare_computations(it, r);
+    color = shade_hit(w, comps);
+    if (color == Color(0.1, 0.1, 0.1))
+        printf("%s: TEST PASSED\n", test);
+    else
+        printf("%s: TEST FAILED\n", test);
+
+
+
 }
 
 void testSceneShading()
@@ -899,7 +962,7 @@ void testSceneShading()
     
     World world = World(objects, l);
     
-    Camera cam = Camera(500, 250, PI / 3);
+    Camera cam = Camera(320, 180, PI / 3);
     cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0,1,0), myVector(0,1,0));
     
     Canvas canvas = cam.render(world);
@@ -909,6 +972,7 @@ void testSceneShading()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
     //launchTest();
 
     //testTransformation();
@@ -926,6 +990,9 @@ int main()
     //testWorld();
 
     testSceneShading();
+
+    auto stop = chrono::high_resolution_clock::now();
+    cout << chrono::duration_cast<chrono::seconds>(stop - start).count() << " seconds" << endl;
 
     return 0;
 }

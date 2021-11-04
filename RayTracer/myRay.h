@@ -53,6 +53,7 @@ struct ItrComps
 
 	//Usefull values
 	myPoint point;
+	myPoint over_point;
 	myVector eye;
 	myVector normal;
 	bool inside;
@@ -101,7 +102,7 @@ myVector normal_at(Sphere object, myPoint worldPoint);
 myVector reflect(myVector in, myVector normal);
 
 //Returns color at a position
-Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal);
+Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal, bool inShadow);
 
 //Non-member functions for ray
 //Generate an array of interactions

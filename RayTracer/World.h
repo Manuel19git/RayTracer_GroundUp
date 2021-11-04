@@ -52,3 +52,6 @@ Color shade_hit(World world, ItrComps comps);
 
 //Returns color of intersection by a ray in the given world
 Color color_at(World world, myRay ray);
+
+//Check if a point is in shadows
+bool is_shadowed(World world, myPoint point);

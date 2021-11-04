@@ -62,14 +62,14 @@ vector<Itr> intersect_world(World world, myRay ray)
 //Color of the intersection encapsulated in the given world
 Color shade_hit(World world, ItrComps comps)
 {
-	return lighting(comps.object.material, world._light, comps.point, comps.eye, comps.normal);
+	bool shadowed = is_shadowed(world, comps.over_point);
+
+	return lighting(comps.object.material, world._light, comps.point, comps.eye, comps.normal, shadowed);
 }
 
 //Returns color of intersection by a ray in the given world
 Color color_at(World world, myRay ray)
 {
-	
-
 	//Find intersections
 	vector<Itr> its = intersect_world(world, ray);
 
@@ -82,13 +82,36 @@ Color color_at(World world, myRay ray)
 		return Color(0, 0, 0);
 	else
 	{
-		
 		//Precompute extra intersection values
 		ItrComps comps = prepare_computations(i, ray);
 
 		//Color the hit
 		return shade_hit(world, comps);
 	}
+}
+
+//Check if a point is in shadows
+bool is_shadowed(World world, myPoint point)
+{
+	//Compute distance from point to light
+	myVector point_to_light = world._light.position - point;
+	float distance = point_to_light.magnitude();
+
+	//Create a ray normalized from point to light
+	point_to_light = point_to_light.normalize();
+	myRay ray = myRay(point, point_to_light);
+
+	//Intersect world with ray
+	vector<Itr> its = intersect_world(world, ray);
+
+	//Check if there was an intersection
+	Itr i = hit(its);
+
+	if (i.t != NULL && i.t < distance)
+		return true;
+	else
+		return false;
+	
 }
 
 
