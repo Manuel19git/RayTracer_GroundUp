@@ -24,19 +24,19 @@ public:
 		Sphere s2 = sphere();
 		s2.transform = scaling(0.5, 0.5, 0.5);
 
-		objects.push_back(s1);
-		objects.push_back(s2);
+		objects.push_back(&s1);
+		objects.push_back(&s2);
 
 	}
 
-	World(vector<Sphere> listObjects, Light newLight)
+	World(vector<Sphere*> listObjects, Light newLight)
 	{
 		objects = listObjects;
 		_light = newLight;
 	}
 
 
-	vector<Sphere> objects;
+	vector<Sphere*> objects;
 	Light _light;
 
 };

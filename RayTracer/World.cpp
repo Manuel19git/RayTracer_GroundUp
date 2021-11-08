@@ -30,7 +30,7 @@ void bubbleSort(vector<Itr> &xs)
 				xs[j].object = aux.object;
 
 				//Release memory
-				aux.object.transform.remove();
+				//aux.object->transform.remove();
 			}
 		}
 	}
@@ -45,12 +45,14 @@ vector<Itr> intersect_world(World world, myRay ray)
 	{
 		//Check for intersection
 		
-		vector<Itr> auxXS = ray.intersect(world.objects[i]);
+		vector<Itr> auxXS = ray.intersect(*world.objects[i]);
 
 		if (auxXS[0].t != NULL) //Dont enter interaction if didnt interact
 		{
 			xs.push_back(auxXS[0]);
 			xs.push_back(auxXS[1]);
+
+
 		}
 	}
 	
@@ -66,7 +68,7 @@ Color shade_hit(World world, ItrComps comps)
 {
 	bool shadowed = is_shadowed(world, comps.over_point);
 
-	return lighting(comps.object.material, world._light, comps.point, comps.eye, comps.normal, shadowed);
+	return lighting(comps.object->material, world._light, comps.point, comps.eye, comps.normal, shadowed);
 }
 
 //Returns color of intersection by a ray in the given world
@@ -74,22 +76,21 @@ Color color_at(World world, myRay ray)
 {
 	//Find intersections
 	vector<Itr> its = intersect_world(world, ray);
-
 	
 	//Find the closest, real hit inside the intersections
 	Itr i = hit(its);
 
 	
-	
 	//Return black if there is no hit
 	if (i.t == NULL)
 	{
 		//Release memory matrix
+		/*
 		for (int i = 0; i < its.size(); ++i)
 		{
 			its[i].object.transform.remove();
 		}
-
+		*/
 		return Color(0, 0, 0);
 	}
 		
@@ -98,13 +99,13 @@ Color color_at(World world, myRay ray)
 		//Precompute extra intersection values
 		ItrComps comps = prepare_computations(i, ray);
 
-
 		//Release memory matrix
+		/*
 		for (int i = 0; i < its.size(); ++i)
 		{
 			its[i].object.transform.remove();
 		}
-
+		*/
 		//Color the hit
 		return shade_hit(world, comps);
 	}
@@ -129,9 +130,28 @@ bool is_shadowed(World world, myPoint point)
 	Itr i = hit(its);
 
 	if (i.t != NULL && i.t < distance)
+	{
+		//Release memory matrix
+		/*
+		for (int i = 0; i < its.size(); ++i)
+		{
+			its[i].object.transform.remove();
+		}
+		*/
 		return true;
+	}
 	else
+	{
+		//Release memory matrix
+		/*
+		for (int i = 0; i < its.size(); ++i)
+		{
+			its[i].object.transform.remove();
+		}
+		*/
 		return false;
+	}
+		
 	
 }
 

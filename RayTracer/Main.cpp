@@ -342,7 +342,7 @@ void testRay()
 
     //Intersect sets the object on the intersection
     test = "Intersect sets the object on the intersection";
-    if (xs[0].object == s && xs[1].object == s)
+    if (*xs[0].object == s && *xs[1].object == s)
         printf("%s: TEST PASSED\n", test);
     else
         printf("%s: TEST FAILED\n", test);
@@ -352,8 +352,8 @@ void testRay()
     test = "The hit, when all intersections have positive t";
     Sphere s2 = sphere();
     Itr i1, i2, i3, i4, i;
-    i1.t = 1; i1.object = s;
-    i2.t = 2; i2.object = s;
+    i1.t = 1; i1.object = &s;
+    i2.t = 2; i2.object = &s;
     vector<Itr> interactions = { i1, i2 };
     i = hit(interactions);
     
@@ -364,8 +364,8 @@ void testRay()
 
     //The hit, when some intersections have negative t
     test = "The hit, when some intersections have negative t";
-    i1.t = -1; i1.object = s;
-    i2.t = 1; i2.object = s;
+    i1.t = -1; i1.object = &s;
+    i2.t = 1; i2.object = &s;
     interactions[0] = i1;
     interactions[1] = i2;
     i = hit(interactions);
@@ -376,8 +376,8 @@ void testRay()
 
     //The hit, when all intersections have negative t
     test = "The hit, when all intersections have negative t";
-    i1.t = -1; i1.object = s;
-    i2.t = -1; i2.object = s;
+    i1.t = -1; i1.object = &s;
+    i2.t = -1; i2.object = &s;
     interactions[0] = i1;
     interactions[1] = i2;
     i = hit(interactions);
@@ -388,10 +388,10 @@ void testRay()
 
     //The hit is always the lowest nonnegative intersection
     test = "The hit is always the lowest nonnegative intersection";
-    i1.t = 5; i1.object = s;
-    i2.t = 7; i2.object = s;
-    i3.t = -3; i3.object = s;
-    i4.t = 2; i4.object = s;
+    i1.t = 5; i1.object = &s;
+    i2.t = 7; i2.object = &s;
+    i3.t = -3; i3.object = &s;
+    i4.t = 2; i4.object = &s;
     vector<Itr> interactions4 = { i1, i2, i3, i4 };
     i = hit(interactions4);
     if (i == i4)
@@ -608,7 +608,7 @@ void testLighShading()
 void testSphereShading()
 {
     //Creation of canvas
-    Canvas canvas(100, 100);
+    Canvas canvas(300, 300);
 
     //Defining sphere and material
     Sphere s = sphere();
@@ -652,10 +652,10 @@ void testSphereShading()
             if (i.t != NULL) //A hit was registered
             {
                 myPoint p = r.position(i.t);
-                myVector normal = normal_at(i.object, p);
+                myVector normal = normal_at(*i.object, p);
                 myVector eye = -r.direction;
                 bool in_shadow = false;
-                Color color = lighting(i.object.material, l, p, eye, normal, in_shadow);
+                Color color = lighting(i.object->material, l, p, eye, normal, in_shadow);
                 canvas.pixel_matrix[x][y] = color;
             }
                 
@@ -685,7 +685,7 @@ void testWorld()
     test = "The hit, when an intersection occurs on the outside";
     Sphere shape = sphere();
     Itr it;
-    it.t = 4; it.object = shape;
+    it.t = 4; it.object = &shape;
     ItrComps comps = prepare_computations(it, r);
     if (!comps.inside)
         printf("%s: TEST PASSED\n", test);
@@ -749,9 +749,9 @@ void testWorld()
 
     //The color with an intersection behind the ray
     test = "The color with an intersection behind the ray";
-    Sphere* outer = &default_world.objects[0];
+    Sphere* outer = default_world.objects[0];
     outer->material.ambient = 1;
-    Sphere* inner = &default_world.objects[1];
+    Sphere* inner = default_world.objects[1];
     inner->material.ambient = 1;
     r = myRay(myPoint(0, 0, 0.75), myVector(0, 0, -1));
     color = color_at(default_world, r);
@@ -897,13 +897,13 @@ void testWorld()
     Sphere s1 = sphere();
     Sphere s2 = sphere();
     s2.transform = translation(0, 0, 10);
-    vector<Sphere> objects = { s1, s2 };
+    vector<Sphere*> objects = { &s1, &s2 };
     Light l = light();
     l.position = myPoint(0,0,-10);
     l.intensity = Color(1,1,1);
     w = World(objects,l);
     r = myRay(myPoint(0, 0, 5), myVector(0, 0, 1));
-    it.t = 4; it.object = s2;
+    it.t = 4; it.object = &s2;
     comps = prepare_computations(it, r);
     color = shade_hit(w, comps);
     if (color == Color(0.1, 0.1, 0.1))
@@ -956,13 +956,14 @@ void testSceneShading()
     left.material.diffuse = 0.7;
     left.material.specular = 0.3;
 
-    vector<Sphere> objects = {floor, left_wall, right_wall, middle, right, left};
+    vector<Sphere*> objects = {&floor, &left_wall, &right_wall, &middle, &right, &left};
     Light l = light();
     l.position = myPoint(-10, 10, -10);
     
     World world = World(objects, l);
     
     Camera cam = Camera(320, 180, PI / 3);
+    //Camera cam = Camera(1920, 1080, PI / 3);
     cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0,1,0), myVector(0,1,0));
     
     Canvas canvas = cam.render(world);
@@ -994,6 +995,7 @@ int main()
 
     testSceneShading();
 
+    
     auto stop = chrono::high_resolution_clock::now();
     cout << chrono::duration_cast<chrono::seconds>(stop - start).count() << " seconds" << endl;
 

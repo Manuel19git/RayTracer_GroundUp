@@ -8,6 +8,8 @@ class MyMatrix
 {
 public:
 	//Constructor
+	MyMatrix() : rowSize(0), colSize(0) {}
+
 	MyMatrix(int size) : rowSize(size), colSize(size) {
 		matrix = new float* [size];
 		for (int r = 0; r < size; ++r)
@@ -68,7 +70,7 @@ public:
 	
 	//Scalar division
 	MyMatrix operator/(float const& scalar);
-
+	
 	void remove()
 	{
 		for (int r = 0; r < rowSize; ++r)
@@ -77,7 +79,7 @@ public:
 		}
 		delete[]matrix;
 	}
-
+	
 	int colSize;
 	int rowSize;
 	float** matrix;

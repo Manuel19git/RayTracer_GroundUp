@@ -31,7 +31,7 @@ struct Light
 struct Sphere
 {
 	int id;
-	MyMatrix transform = MyMatrix(4); //It doestn have default constructor
+	MyMatrix transform; //It doestn have default constructor
 	Material material;
 };
 
@@ -41,7 +41,7 @@ struct Itr
 	//t for a ray intersecting with an object
 	float t;
 	//object
-	Sphere object;
+	Sphere *object;
 };
 
 //Computations (More Info about Intersections)
@@ -49,7 +49,7 @@ struct ItrComps
 {
 	//Intersection info
 	float t;
-	Sphere object;
+	Sphere *object;
 
 	//Usefull values
 	myPoint point;

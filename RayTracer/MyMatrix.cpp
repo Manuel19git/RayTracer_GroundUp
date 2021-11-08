@@ -30,25 +30,64 @@ float& MyMatrix::operator()(int r, int c)
 //Assign operator of regular matrices of the same size
 MyMatrix MyMatrix::operator=(MyMatrix& otherMatrix)
 {
-	rowSize = otherMatrix.rowSize;
-	colSize = otherMatrix.colSize;
+	if (rowSize == 0 && colSize == 0)
+	{
+		rowSize = otherMatrix.rowSize;
+		colSize = otherMatrix.colSize;
 
-	for (int r = 0; r < rowSize; ++r) {
-		for (int c = 0; c < colSize; ++c) {
-			matrix[r][c] = otherMatrix(r, c);
+		matrix = new float* [rowSize];
+		for (int r = 0; r < rowSize; ++r)
+		{
+			matrix[r] = new float[colSize];
+			for (int c = 0; c < colSize; ++c)
+			{
+				matrix[r][c] = otherMatrix(r, c);
+			}
+			
 		}
 	}
+	else
+	{
+		rowSize = otherMatrix.rowSize;
+		colSize = otherMatrix.colSize;
+
+		for (int r = 0; r < rowSize; ++r) {
+			for (int c = 0; c < colSize; ++c) {
+				matrix[r][c] = otherMatrix(r, c);
+			}
+		}
+	}
+	
 	return *this;
 }
 
 MyMatrix MyMatrix::operator=(MyMatrix otherMatrix)
 {
-	rowSize = otherMatrix.rowSize;
-	colSize = otherMatrix.colSize;
+	if (rowSize == 0 && colSize == 0)
+	{
+		rowSize = otherMatrix.rowSize;
+		colSize = otherMatrix.colSize;
 
-	for (int r = 0; r < rowSize; ++r) {
-		for (int c = 0; c < colSize; ++c) {
-			matrix[r][c] = otherMatrix(r, c);
+		matrix = new float* [rowSize];
+		for (int r = 0; r < rowSize; ++r)
+		{
+			matrix[r] = new float[colSize];
+			for (int c = 0; c < colSize; ++c)
+			{
+				matrix[r][c] = otherMatrix(r, c);
+			}
+
+		}
+	}
+	else
+	{
+		rowSize = otherMatrix.rowSize;
+		colSize = otherMatrix.colSize;
+
+		for (int r = 0; r < rowSize; ++r) {
+			for (int c = 0; c < colSize; ++c) {
+				matrix[r][c] = otherMatrix(r, c);
+			}
 		}
 	}
 	return *this;
@@ -281,7 +320,7 @@ MyMatrix inverse(MyMatrix matrix)
 	if (!isInvertible(matrix))
 	{
 		printf("Matrix not invertible!\n");
-		MyMatrix zero(0);
+		MyMatrix zero;
 		return zero;
 	}
 		

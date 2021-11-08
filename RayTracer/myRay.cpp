@@ -7,7 +7,8 @@ bool operator==(const Sphere& lhs, const Sphere& rhs)
 {
 	MyMatrix A = lhs.transform;
 	MyMatrix B = rhs.transform;
-	return lhs.id == rhs.id && A == B;
+
+	return A == B && lhs.id == rhs.id;
 }
 bool operator==(const Itr& lhs, const Itr& rhs)
 {
@@ -36,8 +37,8 @@ vector<Itr> myRay::intersect(Sphere& s)
 	xs.push_back(it1);
 	xs.push_back(it2);
 	
-	xs[0].object = s;
-	xs[1].object = s;
+	xs[0].object = &s;
+	xs[1].object = &s;
 	
 	//Calculate sphere to ray vector
 	myVector sphere2Ray = invRay.origin - myPoint(0, 0, 0);
@@ -78,7 +79,7 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	comps.eye = -ray.direction;
 	
 	//we have to make sure to change the normal if the eye is inside the object
-	comps.normal = normal_at(comps.object, comps.point);
+	comps.normal = normal_at(*comps.object, comps.point);
 		
 	if (dot(comps.normal, comps.eye) < 0)
 	{
@@ -151,6 +152,7 @@ myVector normal_at(Sphere object, myPoint worldPoint)
 	myPoint objectPoint;
 	myVector objectNormal, worldNormal;
 	//Transform world coord to object coord
+
 	MyMatrix inv = inverse(object.transform);
 	objectPoint = inv * worldPoint;
 
