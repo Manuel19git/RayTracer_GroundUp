@@ -14,10 +14,14 @@ myRay Camera::ray_for_pixel(int px, int py)
 	//using the camera matrix, transform the canvas point and the origin, 
 	//and then compute the rays direction vector
 	myPoint pixel, origin;
-	pixel = inverse(transform) * myPoint(world_x, world_y, -1);
-	origin = inverse(transform) * myPoint(0, 0, 0);
+	MyMatrix inv = inverse(transform);
+	pixel = inv * myPoint(world_x, world_y, -1);
+	origin = inv * myPoint(0, 0, 0);
 	myVector direction = pixel - origin;
 	direction = direction.normalize();
+
+	//Release memory
+	inv.remove();
 
 	return myRay(origin, direction);
 

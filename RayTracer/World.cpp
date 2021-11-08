@@ -28,6 +28,9 @@ void bubbleSort(vector<Itr> &xs)
 
 				xs[j].t = aux.t;
 				xs[j].object = aux.object;
+
+				//Release memory
+				aux.object.transform.remove();
 			}
 		}
 	}
@@ -49,7 +52,6 @@ vector<Itr> intersect_world(World world, myRay ray)
 			xs.push_back(auxXS[0]);
 			xs.push_back(auxXS[1]);
 		}
-		
 	}
 	
 	//Sort result intersections in ascending order
@@ -76,18 +78,37 @@ Color color_at(World world, myRay ray)
 	
 	//Find the closest, real hit inside the intersections
 	Itr i = hit(its);
+
+	
 	
 	//Return black if there is no hit
 	if (i.t == NULL)
+	{
+		//Release memory matrix
+		for (int i = 0; i < its.size(); ++i)
+		{
+			its[i].object.transform.remove();
+		}
+
 		return Color(0, 0, 0);
+	}
+		
 	else
 	{
 		//Precompute extra intersection values
 		ItrComps comps = prepare_computations(i, ray);
 
+
+		//Release memory matrix
+		for (int i = 0; i < its.size(); ++i)
+		{
+			its[i].object.transform.remove();
+		}
+
 		//Color the hit
 		return shade_hit(world, comps);
 	}
+	
 }
 
 //Check if a point is in shadows

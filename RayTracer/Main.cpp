@@ -968,6 +968,9 @@ void testSceneShading()
     Canvas canvas = cam.render(world);
     
     canvas.canvas_to_ppm();
+
+
+    
 }
 
 int main()
