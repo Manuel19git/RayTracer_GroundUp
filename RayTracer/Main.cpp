@@ -254,6 +254,7 @@ void testTransformation()
 }
 
 //Paint with pixel each number of a clock
+
 void clockTest()
 {
     Canvas canvas(900, 500);
@@ -295,8 +296,8 @@ void testRay()
     p = myPoint(0, 0, -5);
     v = myVector(0, 0, 1);
     ray = myRay(p, v);
-    Sphere s = sphere();
-    vector<Itr> xs = ray.intersect(s);
+    Sphere s;
+    vector<Itr> xs = intersect(ray, &s);
     
     if (xs[0].t == 4 && xs[1].t == 6)
         printf("%s: TEST PASSED\n", test);
@@ -306,7 +307,7 @@ void testRay()
     //A ray intersects a sphere at a tangent
     test = "A ray intersects a sphere at a tangent";
     ray = myRay(myPoint(0, 1, -5), v);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     if (xs[0].t == 5 && xs[1].t == 5)
         printf("%s: TEST PASSED\n", test);
     else
@@ -315,7 +316,7 @@ void testRay()
     //A ray misses a sphere
     test = "A ray misses a sphere";
     ray = myRay(myPoint(0, 2, -5), v);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     if (xs[0].t == NULL)
         printf("%s: TEST PASSED\n", test);
     else
@@ -324,7 +325,7 @@ void testRay()
     //A ray originates inside a sphereç
     test = "A ray originates inside a sphere";
     ray = myRay(myPoint(0, 0, 0), v);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     if (xs[0].t == -1 && xs[1].t == 1)
         printf("%s: TEST PASSED\n", test);
     else
@@ -333,7 +334,7 @@ void testRay()
     //A sphere is behind a ray
     test = "A sphere is behind a ray";
     ray = myRay(myPoint(0, 0, 5), v);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     
     if (xs[0].t == -6 && xs[1].t == -4)
         printf("%s: TEST PASSED\n", test);
@@ -342,7 +343,7 @@ void testRay()
 
     //Intersect sets the object on the intersection
     test = "Intersect sets the object on the intersection";
-    if (*xs[0].object == s && *xs[1].object == s)
+    if (*xs[0].object == (Shape) s && *xs[1].object == s)
         printf("%s: TEST PASSED\n", test);
     else
         printf("%s: TEST FAILED\n", test);
@@ -350,7 +351,7 @@ void testRay()
 
     //The hit, when all intersections have positive t
     test = "The hit, when all intersections have positive t";
-    Sphere s2 = sphere();
+    Sphere s2;
     Itr i1, i2, i3, i4, i;
     i1.t = 1; i1.object = &s;
     i2.t = 2; i2.object = &s;
@@ -422,7 +423,7 @@ void testRay()
     test = "Intersecting a scaled sphere with a ray";
     ray = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
     s.transform = scaling(2, 2, 2);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     if (xs[0].t == 3 && xs[1].t == 7)
         printf("%s: TEST PASSED\n", test);
     else
@@ -431,7 +432,7 @@ void testRay()
     //Intersecting a translated sphere with a ray
     test = "Intersecting a translated sphere with a ray";
     s.transform = translation(5, 0, 0);
-    xs = ray.intersect(s);
+    xs = intersect(ray, &s);
     if (xs[0].t == NULL)
         printf("%s: TEST PASSED\n", test);
     else
@@ -441,7 +442,7 @@ void testRay()
 void testSphere()
 {
     Canvas canvas(100, 100);
-    Sphere s = sphere();
+    Sphere s;
 
     //s.transform = shearing(1, 0, 0, 0, 0, 0) * scaling(0.5, 1, 1);
 
@@ -467,7 +468,7 @@ void testSphere()
             point = point.normalize();
 
             r = myRay(ray.origin, point);
-            its = r.intersect(s);
+            its = intersect(r, &s);
             i = hit(its);
 
             if (i.t != NULL) //A hit was registered
@@ -485,8 +486,8 @@ void testLighShading()
 {
     //The normal on a sphere at a nonaxial point
     const char* test = "The normal on a sphere at a nonaxial point";
-    Sphere s = sphere();
-    myVector n = normal_at(s, myPoint(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3));
+    Sphere s;
+    myVector n = s.normal_at(myPoint(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3));
     if (n == myVector(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3))
         printf("%s: TEST PASSED\n", test);
     else
@@ -496,7 +497,7 @@ void testLighShading()
     //Computing the normal on a translated sphere
     test = "Computing the normal on a translated sphere";
     s.transform = translation(0, 1, 0);
-    n = normal_at(s, myPoint(0, 1.70711, -0.70711));
+    n = s.normal_at(myPoint(0, 1.70711, -0.70711));
     if (n == myVector(0, 0.70711, -0.70711))
         printf("%s: TEST PASSED\n", test);
     else
@@ -505,7 +506,7 @@ void testLighShading()
     //Computing the normal on a transformed sphere
     test = "Computing the normal on a transformed sphere";
     s.transform = scaling(1, 0.5, 1) * rotation_z(PI / 5);
-    n = normal_at(s, myPoint(0, sqrt(2) / 2, -sqrt(2) / 2));
+    n = s.normal_at(myPoint(0, sqrt(2) / 2, -sqrt(2) / 2));
     if (n == myVector(0, 0.97014, -0.24254))
         printf("%s: TEST PASSED\n", test);
     else
@@ -611,9 +612,9 @@ void testSphereShading()
     Canvas canvas(300, 300);
 
     //Defining sphere and material
-    Sphere s = sphere();
-    s.material = material();
-    s.material.color = Color(1, 0.2, 1);
+    Sphere s;
+    s.mat = material();
+    s.mat.color = Color(1, 0.2, 1);
     //s.transform = shearing(1, 0, 0, 0, 0, 0) * scaling(0.5, 1, 1);
 
     //Define light
@@ -646,16 +647,16 @@ void testSphereShading()
             point = point.normalize();
 
             r = myRay(ray.origin, point);
-            its = r.intersect(s);
+            its = intersect(r, &s);
             i = hit(its);
 
             if (i.t != NULL) //A hit was registered
             {
                 myPoint p = r.position(i.t);
-                myVector normal = normal_at(*i.object, p);
+                myVector normal = i.object->normal_at(p);
                 myVector eye = -r.direction;
                 bool in_shadow = false;
-                Color color = lighting(i.object->material, l, p, eye, normal, in_shadow);
+                Color color = lighting(i.object->mat, l, p, eye, normal, in_shadow);
                 canvas.pixel_matrix[x][y] = color;
             }
                 
@@ -683,7 +684,7 @@ void testWorld()
 
     //The hit, when an intersection occurs on the outside
     test = "The hit, when an intersection occurs on the outside";
-    Sphere shape = sphere();
+    Sphere shape;
     Itr it;
     it.t = 4; it.object = &shape;
     ItrComps comps = prepare_computations(it, r);
@@ -749,13 +750,13 @@ void testWorld()
 
     //The color with an intersection behind the ray
     test = "The color with an intersection behind the ray";
-    Sphere* outer = default_world.objects[0];
-    outer->material.ambient = 1;
-    Sphere* inner = default_world.objects[1];
-    inner->material.ambient = 1;
+    Shape* outer = default_world.objects[0];
+    outer->mat.ambient = 1;
+    Shape* inner = default_world.objects[1];
+    inner->mat.ambient = 1;
     r = myRay(myPoint(0, 0, 0.75), myVector(0, 0, -1));
     color = color_at(default_world, r);
-    if (color == inner->material.color)
+    if (color == inner->mat.color)
         printf("%s: TEST PASSED\n", test);
     else
         printf("%s: TEST FAILED\n", test);
@@ -894,10 +895,10 @@ void testWorld()
 
     //shade_hit() is given an intersection in shadow
     test = "shade_hit() is given an intersection in shadow";
-    Sphere s1 = sphere();
-    Sphere s2 = sphere();
+    Sphere s1;
+    Sphere s2;
     s2.transform = translation(0, 0, 10);
-    vector<Sphere*> objects = { &s1, &s2 };
+    vector<Shape*> objects = { &s1, &s2 };
     Light l = light();
     l.position = myPoint(0,0,-10);
     l.intensity = Color(1,1,1);
@@ -919,44 +920,44 @@ void testSceneShading()
 {
     Sphere floor, left_wall, right_wall;
 
-    floor = sphere();
+    floor;
     floor.transform = scaling(10, 0.01, 10);
-    floor.material = material();
-    floor.material.color = Color(1, 0.9, 0.9);
-    floor.material.specular = 0;
+    floor.mat = material();
+    floor.mat.color = Color(1, 0.9, 0.9);
+    floor.mat.specular = 0;
 
-    left_wall = sphere();
+    left_wall;
     left_wall.transform = translation(0, 0, 5) * rotation_y(-PI / 4) * rotation_x(PI / 2) * scaling(10, 0.01, 10);
-    left_wall.material = floor.material;
+    left_wall.mat = floor.mat;
 
-    right_wall = sphere();
+    right_wall;
     right_wall.transform = translation(0, 0, 5) * rotation_y(PI / 4) * rotation_x(PI / 2) * scaling(10, 0.01, 10);
-    right_wall.material = floor.material;
+    right_wall.mat = floor.mat;
 
     Sphere middle, right, left;
 
-    middle = sphere();
-    middle.material = material();
+    middle;
+    middle.mat = material();
     middle.transform = translation(-0.5, 1, 0.5);
-    middle.material.color = Color(0.1, 1, 0.5);
-    middle.material.diffuse = 0.7;
-    middle.material.specular = 0.3;
+    middle.mat.color = Color(0.1, 1, 0.5);
+    middle.mat.diffuse = 0.7;
+    middle.mat.specular = 0.3;
 
-    right = sphere();
-    right.material = material();
+    right;
+    right.mat = material();
     right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
-    right.material.color = Color(0.5, 1, 0.1);
-    right.material.diffuse = 0.7;
-    right.material.specular = 0.3;
+    right.mat.color = Color(0.5, 1, 0.1);
+    right.mat.diffuse = 0.7;
+    right.mat.specular = 0.3;
 
-    left = sphere();
-    left.material = material();
+    left;
+    left.mat = material();
     left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
-    left.material.color = Color(1, 0.8, 0.1);
-    left.material.diffuse = 0.7;
-    left.material.specular = 0.3;
+    left.mat.color = Color(1, 0.8, 0.1);
+    left.mat.diffuse = 0.7;
+    left.mat.specular = 0.3;
 
-    vector<Sphere*> objects = {&floor, &left_wall, &right_wall, &middle, &right, &left};
+    vector<Shape*> objects = {&floor, &left_wall, &right_wall, &middle, &right, &left};
     Light l = light();
     l.position = myPoint(-10, 10, -10);
     

@@ -1,8 +1,30 @@
 #pragma once
-#include <iostream>
-#include "myRay.h"
+#include "Shape.h"
 
+//------------------Intersection Info------------------
+struct Itr
+{
+	//t for a ray intersecting with an object
+	float t;
+	//object
+	Shape* object;
+};
+bool operator==(const Itr& lhs, const Itr& rhs);
 
+//Computations (More Info about Intersections)
+struct ItrComps
+{
+	//Intersection info
+	float t;
+	Shape* object;
+
+	//Usefull values
+	myPoint point;
+	myPoint over_point;
+	myVector eye;
+	myVector normal;
+	bool inside;
+};
 
 
 class World
@@ -15,13 +37,13 @@ public:
 		_light.position = myPoint(-10, 10, -10);
 
 		//Sphere 1
-		Sphere s1 = sphere();
-		s1.material.color = Color(0.8, 1.0, 0.6);
-		s1.material.diffuse = 0.7;
-		s1.material.specular = 0.2;
+		Sphere s1;
+		s1.mat.color = Color(0.8, 1.0, 0.6);
+		s1.mat.diffuse = 0.7;
+		s1.mat.specular = 0.2;
 
 		//Sphere 2
-		Sphere s2 = sphere();
+		Sphere s2;
 		s2.transform = scaling(0.5, 0.5, 0.5);
 
 		objects.push_back(&s1);
@@ -29,17 +51,28 @@ public:
 
 	}
 
-	World(vector<Sphere*> listObjects, Light newLight)
+	World(vector<Shape*> listObjects, Light newLight)
 	{
 		objects = listObjects;
 		_light = newLight;
 	}
 
 
-	vector<Sphere*> objects;
+	vector<Shape*> objects;
 	Light _light;
 
 };
+//Intersect ray with a shape
+vector<Itr> intersect(myRay ray, Shape* object);
+
+//Generate an array of interactions
+vector<Itr> intersections(Itr it1, Itr it2);
+
+//Returns the closest valid intersection
+Itr hit(vector<Itr> xs);
+
+//Returns color at a position
+Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal, bool inShadow);
 
 //Checks if a ray intersects with anything on the specified world
 vector<Itr> intersect_world(World world, myRay ray);
