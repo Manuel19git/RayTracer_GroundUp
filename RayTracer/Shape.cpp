@@ -11,8 +11,6 @@ bool operator==(const Shape& lhs, const Shape& rhs)
 	return A == B && lhs.id == rhs.id;
 }
 
-
-
 //--------------Shape--------------
 
 
@@ -51,40 +49,38 @@ vector<float> Sphere::intersectionT(myRay ray)
 }
 
 //Return normal vector of given point on a sphere
-myVector Sphere::normal_at(myPoint worldPoint)
+myVector Sphere::local_normal_at(myPoint localPoint)
 {
-	myPoint objectPoint;
-	myVector objectNormal, worldNormal;
-	//Transform world coord to object coord
-
-	MyMatrix inv = inverse(transform);
-	objectPoint = inv * worldPoint;
-
 	//Calculate normal of object (center of sphere is zero for now)
-	objectNormal = objectPoint - myPoint(0, 0, 0);
-
-
-	//Transform object normal to world normal
-	MyMatrix trans = transpose(inv);
-
-	//First assing to tuple 
-	Tuple worldNormalTuple = trans * objectNormal;
-
-
-
-	//world normal w value to zero. Avoids problems later
-	worldNormalTuple.w = 0;
-	worldNormal = worldNormalTuple;
-
-	//Delete matrices
-	trans.remove();
-	inv.remove();
-
-	//Normalize result normal vector
-
-	worldNormal = worldNormal.normalize();
-
-	return worldNormal;
+	return localPoint - myPoint(0, 0, 0);
 }
 
+//--------------Surface--------------
+vector<float> Plane::intersectionT(myRay ray)
+{
+	MyMatrix inv = inverse(transform);
+	myRay invRay = ray.transform(inv);
 
+	vector<float> t;
+
+	if (abs(invRay.direction.y) < 0.01)
+	{
+		t.push_back(NULL);
+		t.push_back(NULL);
+	}
+	else
+	{
+		float value = -invRay.origin.y / invRay.direction.y;
+		
+		t.push_back(value);
+		t.push_back(value);
+	}
+
+	return t;
+}
+
+//Return normal vector of given point on a XZ plane
+myVector Plane::local_normal_at(myPoint localPoint)
+{
+	return myVector(0,1,0);
+}

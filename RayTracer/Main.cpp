@@ -487,7 +487,7 @@ void testLighShading()
     //The normal on a sphere at a nonaxial point
     const char* test = "The normal on a sphere at a nonaxial point";
     Sphere s;
-    myVector n = s.normal_at(myPoint(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3));
+    myVector n = normal_at(myPoint(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3), &s);
     if (n == myVector(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3))
         printf("%s: TEST PASSED\n", test);
     else
@@ -497,7 +497,7 @@ void testLighShading()
     //Computing the normal on a translated sphere
     test = "Computing the normal on a translated sphere";
     s.transform = translation(0, 1, 0);
-    n = s.normal_at(myPoint(0, 1.70711, -0.70711));
+    n = normal_at(myPoint(0, 1.70711, -0.70711), &s);
     if (n == myVector(0, 0.70711, -0.70711))
         printf("%s: TEST PASSED\n", test);
     else
@@ -506,7 +506,7 @@ void testLighShading()
     //Computing the normal on a transformed sphere
     test = "Computing the normal on a transformed sphere";
     s.transform = scaling(1, 0.5, 1) * rotation_z(PI / 5);
-    n = s.normal_at(myPoint(0, sqrt(2) / 2, -sqrt(2) / 2));
+    n = normal_at(myPoint(0, sqrt(2) / 2, -sqrt(2) / 2), &s);
     if (n == myVector(0, 0.97014, -0.24254))
         printf("%s: TEST PASSED\n", test);
     else
@@ -531,6 +531,8 @@ void testLighShading()
 
     //Lightning
     Material m = material();
+    Sphere aux;
+    aux.mat = m;
     myPoint position = myPoint(0, 0, 0);
     myVector eye, normal;
     Light light;
@@ -543,7 +545,7 @@ void testLighShading()
     light.position = myPoint(0, 0, -10);
     light.intensity = Color(1, 1, 1);
     bool in_shadow = false;
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     
     if (result == Color(1.9, 1.9, 1.9))
         printf("%s: TEST PASSED\n", test);
@@ -554,7 +556,7 @@ void testLighShading()
     test = "Lighting with the eye between light and surface, eye offset 45 degrees";
     eye = myVector(0, sqrt(2) / 2, -sqrt(2) / 2);
     normal = myVector(0, 0, -1);
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     if (result == Color(1.0, 1.0, 1.0))
         printf("%s: TEST PASSED\n", test);
     else
@@ -565,7 +567,7 @@ void testLighShading()
     eye = myVector(0, 0, -1);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 10, -10);
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     
     if (result == Color(0.7364, 0.7364, 0.7364))
         printf("%s: TEST PASSED\n", test);
@@ -577,7 +579,7 @@ void testLighShading()
     eye = myVector(0, -sqrt(2) / 2, -sqrt(2) / 2);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 10, -10);
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     if (result == Color(1.6364, 1.6364, 1.6364))
         printf("%s: TEST PASSED\n", test);
     else
@@ -588,7 +590,7 @@ void testLighShading()
     eye = myVector(0, 0, -1);
     normal = myVector(0, 0, -1);
     light.position = myPoint(0, 0, 10);
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     if (result == Color(0.1, 0.1, 0.1))
         printf("%s: TEST PASSED\n", test);
     else
@@ -599,7 +601,7 @@ void testLighShading()
     light.position = myPoint(0, 0, -10);
     light.intensity = Color(1, 1, 1);
     in_shadow = true;
-    result = lighting(m, light, position, eye, normal, in_shadow);
+    result = lighting(&aux, light, position, eye, normal, in_shadow);
     if (result == Color(0.1, 0.1, 0.1))
         printf("%s: TEST PASSED\n", test);
     else
@@ -653,10 +655,10 @@ void testSphereShading()
             if (i.t != NULL) //A hit was registered
             {
                 myPoint p = r.position(i.t);
-                myVector normal = i.object->normal_at(p);
+                myVector normal = normal_at(p, i.object);
                 myVector eye = -r.direction;
                 bool in_shadow = false;
-                Color color = lighting(i.object->mat, l, p, eye, normal, in_shadow);
+                Color color = lighting(i.object, l, p, eye, normal, in_shadow);
                 canvas.pixel_matrix[x][y] = color;
             }
                 
@@ -918,11 +920,9 @@ void testWorld()
 
 void testSceneShading()
 {
-    Sphere floor, left_wall, right_wall;
+    Plane floor, left_wall, right_wall;
 
     floor;
-    floor.transform = scaling(10, 0.01, 10);
-    floor.mat = material();
     floor.mat.color = Color(1, 0.9, 0.9);
     floor.mat.specular = 0;
 
@@ -971,8 +971,83 @@ void testSceneShading()
     
     canvas.canvas_to_ppm();
 
+}
 
-    
+void testWallScene()
+{
+    Plane floor, left_wall, right_wall;
+
+    floor;
+    floor.mat.color = Color(1, 0.9, 0.9);
+    floor.mat.specular = 0; 
+    floor.mat.showPattern = true;
+    floor.mat.pattern = &Checker();
+    floor.mat.pattern->transform = translation(6, 6, 6);
+    floor.mat.pattern->b = Color(0.2, 0.2, 0.2);
+
+    left_wall;
+    left_wall.transform = translation(0, 0, 5) * rotation_y(-PI / 4) * rotation_x(PI / 2);
+    left_wall.mat.color = Color(1, 0.9, 0.9);
+    left_wall.mat.showPattern = true;
+    left_wall.mat.pattern = &Ring();
+
+    right_wall;
+    right_wall.transform = translation(0, 0, 5) * rotation_y(PI / 4) * rotation_x(PI / 2);
+    right_wall.mat.color = Color(1, 0.9, 0.9);
+    right_wall.mat.specular = 0;
+    right_wall.mat.showPattern = true;
+    right_wall.mat.pattern = &Stripe();
+    right_wall.mat.pattern->transform = rotation_y(-PI / 4);
+    right_wall.mat.pattern->a = Color(1, 0.9, 0.9);
+    right_wall.mat.pattern->b = Color(0, 0.8, 0);
+
+    Sphere middle, right, left;
+
+    middle;
+    middle.mat = material();
+    middle.transform = translation(-0.5, 1, 0.5);
+    middle.mat.color = Color(0.1, 1, 0.5);
+    middle.mat.diffuse = 0.7;
+    middle.mat.specular = 0.3;
+    middle.mat.showPattern = true;
+    middle.mat.pattern = &Ring();
+    middle.mat.pattern->transform = rotation_y(PI/4) * rotation_z(PI/4) * scaling(0.3, 0.3, 0.3);
+    middle.mat.pattern->a = Color(0.1, 1, 0.5);
+    middle.mat.pattern->b = Color(0.8, 0.5, 0);
+
+    right;
+    right.mat = material();
+    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    right.mat.color = Color(0.5, 1, 0.1);
+    right.mat.diffuse = 0.7;
+    right.mat.specular = 0.3;
+    right.mat.showPattern = true;
+    right.mat.pattern = &Checker();
+    right.mat.pattern->transform = scaling(0.5, 0.5, 0.5);
+    right.mat.pattern->a = Color(0.5, 1, 0.1);
+    right.mat.pattern->b = Color(0.6, 0.2, 0.6);
+
+    left;
+    left.mat = material();
+    left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    left.mat.color = Color(1, 0.8, 0.1);
+    left.mat.diffuse = 0.7;
+    left.mat.specular = 0.3;
+
+    vector<Shape*> objects = { &floor, &left_wall, &right_wall, &middle, &right, &left };
+    Light l = light();
+    l.position = myPoint(-10, 10, -10);
+
+    World world = World(objects, l);
+
+    //Camera cam = Camera(320, 180, PI / 3);
+    Camera cam = Camera(1920, 1080, PI / 3);
+    cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0, 1, 0), myVector(0, 1, 0));
+
+    Canvas canvas = cam.render(world);
+
+    canvas.canvas_to_ppm();
+
 }
 
 int main()
@@ -994,9 +1069,10 @@ int main()
 
     //testWorld();
 
-    testSceneShading();
+    //testSceneShading();
 
-    
+    testWallScene();
+
     auto stop = chrono::high_resolution_clock::now();
     cout << chrono::duration_cast<chrono::seconds>(stop - start).count() << " seconds" << endl;
 

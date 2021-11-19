@@ -1,5 +1,5 @@
 #pragma once
-#include "MyMatrix.h"
+#include "Pattern.h"
 #include <list>
 
 //------------------Material------------------
@@ -15,6 +15,9 @@ struct Material
 	float specular;
 	//Shininess [10,200]
 	float shininess;
+
+	bool showPattern;
+	Pattern* pattern;
 };
 
 

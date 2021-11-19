@@ -43,7 +43,6 @@ vector<Itr> intersect(myRay ray, Shape* object)
 	vector<float> t;
 	//intersectionT will change along with object
 	t = object->intersectionT(ray);
-
 	vector<Itr> xs;
 	Itr it1, it2;
 	it1.t = t[0]; it2.t = t[1];
@@ -93,14 +92,73 @@ Itr hit(vector<Itr> xs)
 
 }
 
+//Returns normal of a point in a shape in world coordinates
+myVector normal_at(myPoint worldPoint, Shape* object)
+{
+	myPoint localPoint;
+	myVector objectNormal, worldNormal;
+
+	//Transform world coord to object coord
+	MyMatrix inv = inverse(object->transform);
+	localPoint = inv * worldPoint;
+
+	//Calculate object normal
+	objectNormal = object->local_normal_at(localPoint);
+
+	//Transform object normal to world normal
+	MyMatrix trans = transpose(inv);
+	Tuple worldNormalTuple = trans * objectNormal;
+	//world normal w value to zero. Avoids problems later
+	worldNormalTuple.w = 0;
+	worldNormal = worldNormalTuple;
+
+	//Delete matrices
+	trans.remove();
+	inv.remove();
+
+	//Normalize result normal vector
+	worldNormal = worldNormal.normalize();
+
+	return worldNormal;
+}
+
+//Returns color based on pattern of a shape and its transform
+Color pattern_at_shape(Pattern* pattern, Shape* object, myPoint worldPoint)
+{
+	
+	MyMatrix invObject = inverse(object->transform);
+	MyMatrix invPattern = inverse(pattern->transform);
+
+	myPoint localPoint, patternPoint;
+
+	//transform point to local point of object
+	localPoint = invObject * worldPoint;
+
+	//transform localPoint to pattern point
+	patternPoint = invPattern * localPoint;
+
+	//Delete matrices
+	invObject.remove();
+	invPattern.remove();
+	
+	return pattern->pattern_at(patternPoint);
+}
+
 
 //Returns color at a position
-Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal, bool inShadow)
+Color lighting(Shape* object, Light l, myPoint p, myVector eye, myVector normal, bool inShadow)
 {
-	Color ambientColor, diffuseColor, specularColor;
+	Color objectColor, ambientColor, diffuseColor, specularColor;
+	Material m = object->mat;
 
+	//Check if an object has a pattern to be displayed
+	if (object->mat.showPattern)
+		objectColor = pattern_at_shape(m.pattern, object, p);
+	else
+		objectColor = m.color;
+	
 	//Combine surface color with light intensity
-	Color effective_color = m.color * l.intensity;
+	Color effective_color = objectColor * l.intensity;
 
 	//Find direction to light source from point being iluminated
 	myVector light_dir = l.position - p;
@@ -182,7 +240,7 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	comps.eye = -ray.direction;
 
 	//we have to make sure to change the normal if the eye is inside the object
-	comps.normal = comps.object->normal_at(comps.point);
+	comps.normal = normal_at(comps.point, comps.object);
 
 	if (dot(comps.normal, comps.eye) < 0)
 	{
@@ -194,7 +252,7 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 
 	//Compute a slightly offset along normal point
 	//This is done to avoid floating point number errors when detecting if a point is shadowed
-	float epsilon = 0.1;
+	float epsilon = 0.01; //Depending on this number, there could be artifacts in the scene
 	comps.over_point = comps.point + comps.normal * epsilon;
 
 	return comps;
@@ -204,8 +262,8 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 Color shade_hit(World world, ItrComps comps)
 {
 	bool shadowed = is_shadowed(world, comps.over_point);
-
-	return lighting(comps.object->mat, world._light, comps.point, comps.eye, comps.normal, shadowed);
+	
+	return lighting(comps.object, world._light, comps.point, comps.eye, comps.normal, shadowed);
 }
 
 //Returns color of intersection by a ray in the given world
@@ -254,8 +312,6 @@ bool is_shadowed(World world, myPoint point)
 		return true;
 	else
 		return false;
-	
-		
 	
 }
 

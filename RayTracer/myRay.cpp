@@ -34,6 +34,7 @@ Material material()
 	m.diffuse = 0.9;
 	m.specular = 0.9;
 	m.shininess = 200.0;
+	m.showPattern = false;
 
 	return m;
 }

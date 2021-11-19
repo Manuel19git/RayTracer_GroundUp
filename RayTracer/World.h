@@ -71,8 +71,14 @@ vector<Itr> intersections(Itr it1, Itr it2);
 //Returns the closest valid intersection
 Itr hit(vector<Itr> xs);
 
+//Returns normal of a point in a shape in world coordinates
+myVector normal_at(myPoint worldpoint, Shape* object);
+
+//Returns color based on pattern of a shape and its transform
+Color pattern_at_shape(Pattern* pattern, Shape* object, myPoint worldPoint);
+
 //Returns color at a position
-Color lighting(Material m, Light l, myPoint p, myVector eye, myVector normal, bool inShadow);
+Color lighting(Shape* object, Light l, myPoint p, myVector eye, myVector normal, bool inShadow);
 
 //Checks if a ray intersects with anything on the specified world
 vector<Itr> intersect_world(World world, myRay ray);

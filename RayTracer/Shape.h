@@ -19,7 +19,7 @@ public:
 		return empty;
 	}
 
-	virtual myVector normal_at(myPoint worldPoint)
+	virtual myVector local_normal_at(myPoint localPoint)
 	{
 		cout << "No shape defined to calculate normal" << endl;
 
@@ -48,7 +48,26 @@ public:
 	vector<float> intersectionT(myRay ray);
 
 	//Return normal vector of given point on a sphere
-	myVector normal_at(myPoint worldPoint);
+	myVector local_normal_at(myPoint localPoint);
+};
+
+class Plane : public Shape
+{
+public:
+	Plane()
+	{
+		id = ShapeId;
+		transform = I_Matrix();
+		mat = material();
+		//Unique value will alwyas be the next to the last Id
+		ShapeId++;
+	}
+
+	//Intersects ray with a XZ plane
+	vector<float> intersectionT(myRay ray);
+
+	//Return normal vector of given point on a XZ plane
+	myVector local_normal_at(myPoint localPoint);
 };
 
 //Operations Sphere
