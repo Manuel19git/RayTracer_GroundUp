@@ -12,6 +12,13 @@ bool operator==(const Shape& lhs, const Shape& rhs)
 }
 
 //--------------Shape--------------
+bool Shape::operator==(const Shape& rhs)
+{
+	MyMatrix A = transform;
+	MyMatrix B = rhs.transform;
+
+	return A == B && id == rhs.id;
+}
 
 
 //--------------Sphere--------------

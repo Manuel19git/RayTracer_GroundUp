@@ -24,6 +24,13 @@ struct ItrComps
 	myVector eye;
 	myVector normal;
 	bool inside;
+
+	//Reflection
+	myVector reflectV;
+
+	//Refraction
+	float n1, n2;
+	myPoint under_point;
 };
 
 
@@ -84,13 +91,23 @@ Color lighting(Shape* object, Light l, myPoint p, myVector eye, myVector normal,
 vector<Itr> intersect_world(World world, myRay ray);
 
 //Precompute computation structure with intersection info
-ItrComps prepare_computations(Itr intersection, myRay ray);
-
-//Color of the intersection encapsulated in the given world
-Color shade_hit(World world, ItrComps comps);
+ItrComps prepare_computations(Itr intersection, myRay ray, vector<Itr> xs);
 
 //Returns color of intersection by a ray in the given world
-Color color_at(World world, myRay ray);
+//int remaining to control recursivness
+Color color_at(World world, myRay ray, int remaining = 5);
 
 //Check if a point is in shadows
 bool is_shadowed(World world, myPoint point);
+
+//Color of the intersection encapsulated in the given world
+Color shade_hit(World world, ItrComps comps, int remaining);
+
+//Returns the color of a point given its reflectance value
+Color reflected_color(World world, ItrComps comps, int remaining);
+
+//Returns the color of a point in a refractive object
+Color refracted_color(World world, ItrComps comps, int remaining);
+
+//Returns a number called reflectance, which is the fraction of light being reflected
+float schlick(ItrComps comps);

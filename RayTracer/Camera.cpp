@@ -30,6 +30,7 @@ myRay Camera::ray_for_pixel(int px, int py)
 //Renders a world with current camera and writes it to a ppm file
 Canvas Camera::render(World world)
 {
+
 	//Define canvas
 	Canvas canvas(hsize, vsize);
 

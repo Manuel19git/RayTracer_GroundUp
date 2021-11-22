@@ -674,6 +674,7 @@ void testSphereShading()
 void testWorld()
 {
     World w;
+    int reflectLimit = 10;
     //Intersect a world with a ray
     const char* test = "Intersect a world with a ray";
     myRay r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
@@ -689,7 +690,7 @@ void testWorld()
     Sphere shape;
     Itr it;
     it.t = 4; it.object = &shape;
-    ItrComps comps = prepare_computations(it, r);
+    ItrComps comps = prepare_computations(it, r, xs);
     if (!comps.inside)
         printf("%s: TEST PASSED\n", test);
     else
@@ -699,7 +700,7 @@ void testWorld()
     test = "The hit, when an intersection occurs on the inside";
     r.origin = myPoint(0, 0, 0);
     it.t = 1;
-    comps = prepare_computations(it, r);
+    comps = prepare_computations(it, r, xs);
     if (comps.point == myPoint(0,0,1) && comps.eye == myVector(0,0,-1) && comps.inside == true && comps.normal == myVector(0,0,-1))
         printf("%s: TEST PASSED\n", test);
     else
@@ -709,8 +710,8 @@ void testWorld()
     test = "Shading an intersection";
     r.origin = myPoint(0, 0, -5);
     it.t = 4; it.object = w.objects[0];
-    comps = prepare_computations(it, r);
-    Color color = shade_hit(w, comps);
+    comps = prepare_computations(it, r, xs);
+    Color color = shade_hit(w, comps, reflectLimit);
     if (color == Color(0.38066, 0.47583, 0.2855))
         printf("%s: TEST PASSED\n", test);
     else
@@ -723,8 +724,8 @@ void testWorld()
     w._light.intensity = Color(1, 1, 1);
     r.origin = myPoint(0, 0, 0);
     it.t = 0.5; it.object = w.objects[1];
-    comps = prepare_computations(it, r);
-    color = shade_hit(w, comps);
+    comps = prepare_computations(it, r, xs);
+    color = shade_hit(w, comps, reflectLimit);
 
     if (color == Color(0.90498, 0.90498, 0.90498))
         printf("%s: TEST PASSED\n", test);
@@ -734,7 +735,7 @@ void testWorld()
     //The color when a ray misses
     test = "The color when a ray misses";
     r = myRay(myPoint(0, 0, -5), myVector(0, 1, 0));
-    color = color_at(w, r);
+    color = color_at(w, r, reflectLimit);
     if (color == Color(0,0,0))
         printf("%s: TEST PASSED\n", test);
     else
@@ -744,7 +745,7 @@ void testWorld()
     World default_world;
     test = "The color when a ray hits";
     r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
-    color = color_at(default_world, r);
+    color = color_at(default_world, r, reflectLimit);
     if (color == Color(0.38066, 0.47583, 0.2855))
         printf("%s: TEST PASSED\n", test);
     else
@@ -757,7 +758,7 @@ void testWorld()
     Shape* inner = default_world.objects[1];
     inner->mat.ambient = 1;
     r = myRay(myPoint(0, 0, 0.75), myVector(0, 0, -1));
-    color = color_at(default_world, r);
+    color = color_at(default_world, r, reflectLimit);
     if (color == inner->mat.color)
         printf("%s: TEST PASSED\n", test);
     else
@@ -907,8 +908,8 @@ void testWorld()
     w = World(objects,l);
     r = myRay(myPoint(0, 0, 5), myVector(0, 0, 1));
     it.t = 4; it.object = &s2;
-    comps = prepare_computations(it, r);
-    color = shade_hit(w, comps);
+    comps = prepare_computations(it, r, xs);
+    color = shade_hit(w, comps, reflectLimit);
     if (color == Color(0.1, 0.1, 0.1))
         printf("%s: TEST PASSED\n", test);
     else
@@ -984,6 +985,7 @@ void testWallScene()
     floor.mat.pattern = &Checker();
     floor.mat.pattern->transform = translation(6, 6, 6);
     floor.mat.pattern->b = Color(0.2, 0.2, 0.2);
+    floor.mat.reflective = 0.5;
 
     left_wall;
     left_wall.transform = translation(0, 0, 5) * rotation_y(-PI / 4) * rotation_x(PI / 2);
@@ -1040,6 +1042,155 @@ void testWallScene()
 
     World world = World(objects, l);
 
+    Camera cam = Camera(320, 180, PI / 3);
+    //Camera cam = Camera(1920, 1080, PI / 3);
+    cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0, 1, 0), myVector(0, 1, 0));
+
+    Canvas canvas = cam.render(world);
+
+    canvas.canvas_to_ppm();
+
+}
+
+
+
+void testRefraction()
+{
+    Sphere A, B, C;
+    A.transform = scaling(2, 2, 2);
+    A.mat = material();
+    A.mat.refractive_index = 1.5;
+
+    B.transform = translation(0, 0, -0.25);
+    B.mat = material();
+    B.mat.refractive_index = 2.0;
+
+    C.transform = translation(0, 0, 0.25);
+    C.mat = material();
+    C.mat.refractive_index = 2.5;
+
+    myRay r = myRay(myPoint(0, 0, -4), myVector(0, 0, 1));
+    Itr it0, it1, it2, it3, it4, it5;
+    it0.t = 2; it0.object = &A;
+    it1.t = 2.75; it1.object = &B;
+    it2.t = 3.25; it2.object = &C;
+    it3.t = 4.75; it3.object = &B;
+    it4.t = 5.25; it4.object = &C;
+    it5.t = 6; it5.object = &A;
+
+    vector<Itr> xs = { it0, it1, it2, it3, it4, it5 };
+
+    ItrComps comps = prepare_computations(it0, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+    comps = prepare_computations(it1, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+    comps = prepare_computations(it2, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+    comps = prepare_computations(it3, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+    comps = prepare_computations(it4, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+    comps = prepare_computations(it5, r, xs);
+    cout << comps.n1 << " " << comps.n2 << endl;
+
+
+    
+    
+}
+
+void testFresnel()
+{
+    myRay r = myRay(myPoint(0, 0, -3), myVector(0, -sqrt(2) / 2, sqrt(2) / 2));
+    Plane floor;
+    floor.transform = translation(0, -1, 0);
+    floor.mat.reflective = 0.5;
+    floor.mat.transparency = 0.5;
+    floor.mat.refractive_index = 1.5;
+
+    Sphere ball;
+    ball.mat.color = Color(1, 0, 0);
+    ball.mat.ambient = 0.5;
+    ball.transform = translation(0, -3.5, -0.5);
+
+    //Creates a default world
+    Light _light = light();
+    _light.position = myPoint(-10, 10, -10);
+
+    World w = World({ &floor, &ball }, _light);
+
+    Itr it1;
+    it1.t = sqrt(2); it1.object = &floor;
+    vector<Itr> xs = { it1 };
+    ItrComps comps = prepare_computations(it1, r, xs);
+
+    Color color = shade_hit(w, comps, 5);
+    cout << color << endl;
+}
+
+void testSceneReflectionRefraction()
+{
+    Plane floor, left_wall, right_wall;
+
+    floor;
+    floor.mat.color = Color(1, 0.9, 0.9);
+    floor.mat.specular = 0;
+    floor.mat.showPattern = true;
+    floor.mat.pattern = &Checker();
+    floor.mat.pattern->transform = translation(6, 6, 6);
+    floor.mat.pattern->b = Color(0.2, 0.2, 0.2);
+    floor.mat.reflective = 0.4;
+
+    left_wall;
+    left_wall.transform = translation(0, 0, 5) * rotation_y(-PI / 4) * rotation_x(PI / 2);
+    left_wall.mat.color = Color(1, 0.9, 0.9);
+    left_wall.mat.showPattern = true;
+    left_wall.mat.pattern = &Checker();
+    left_wall.mat.pattern->b = Color(0.3, 0.2, 0.2);
+
+    right_wall;
+    right_wall.transform = translation(0, 0, 5) * rotation_y(PI / 4) * rotation_x(PI / 2);
+    right_wall.mat.color = Color(1, 0.9, 0.9);
+    right_wall.mat.showPattern = true;
+    right_wall.mat.pattern = &Checker();
+    right_wall.mat.pattern->b = Color(0.2, 0.3, 0.2);
+
+    Sphere middle, behind, right, left;
+
+    middle;
+    middle.mat = material();
+    middle.transform = translation(-0.5, 1, 0.5);
+    middle.mat.color = Color(0.8, 0.8, 0.8);
+    middle.mat.reflective = 0;
+    middle.mat.transparency = 0.8;
+    middle.mat.refractive_index = 1.5;
+
+    behind;
+    behind.mat = material();
+    behind.transform = translation(-0.5, 2, 4.5) * scaling(0.7, 0.7, 0.7);
+    behind.mat.color = Color(0, 0, 1);
+    behind.mat.reflective = 0;
+
+    right;
+    right.mat = material();
+    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    right.mat.color = Color(0.5, 1, 0.1);
+    right.mat.diffuse = 0.7;
+    right.mat.specular = 0.3;
+
+    left;
+    left.mat = material();
+    left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    left.mat.color = Color(1, 0.8, 0.1);
+    left.mat.diffuse = 0.7;
+    left.mat.specular = 0.3;
+
+
+    vector<Shape*> objects = {&floor, &left_wall, &right_wall, &middle, &behind, &right, &left};
+    Light l = light();
+    l.position = myPoint(-10, 10, -10);
+
+    World world = World(objects, l);
+
     //Camera cam = Camera(320, 180, PI / 3);
     Camera cam = Camera(1920, 1080, PI / 3);
     cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0, 1, 0), myVector(0, 1, 0));
@@ -1071,7 +1222,13 @@ int main()
 
     //testSceneShading();
 
-    testWallScene();
+    //testRefraction();
+
+    //testFresnel();
+
+    //testWallScene();
+
+    testSceneReflectionRefraction();
 
     auto stop = chrono::high_resolution_clock::now();
     cout << chrono::duration_cast<chrono::seconds>(stop - start).count() << " seconds" << endl;

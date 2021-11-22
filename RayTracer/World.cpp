@@ -1,4 +1,4 @@
-#include "World.h"
+﻿#include "World.h"
 
 
 //Non-member functions
@@ -35,6 +35,28 @@ void bubbleSort(vector<Itr> &xs)
 			}
 		}
 	}
+}
+
+//Checks if a shape is inside a vector of shapes
+bool contains(vector<Shape*>* objects, Shape* object)
+{
+	Shape o;
+	//We have to pass objects and object by reference
+	for (int i = 0; i < objects->size(); ++i)
+	{
+		o = *objects->at(i);
+		
+		if (o == *object)
+		{
+			//We eliminate if an element is found
+			objects->erase(next(objects->begin(), i));
+			return true;
+		}
+			
+	}
+	
+	objects->push_back(object);
+	return false;
 }
 
 //Intersect ray with a shape
@@ -226,7 +248,7 @@ vector<Itr> intersect_world(World world, myRay ray)
 }
 
 //Precompute computation structure with intersection info
-ItrComps prepare_computations(Itr intersection, myRay ray)
+ItrComps prepare_computations(Itr intersection, myRay ray, vector<Itr> xs)
 {
 	//Data structure
 	ItrComps comps;
@@ -236,9 +258,10 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	comps.object = intersection.object;
 
 	//Usefull values
+	
 	comps.point = ray.position(intersection.t);
 	comps.eye = -ray.direction;
-
+	
 	//we have to make sure to change the normal if the eye is inside the object
 	comps.normal = normal_at(comps.point, comps.object);
 
@@ -255,41 +278,73 @@ ItrComps prepare_computations(Itr intersection, myRay ray)
 	float epsilon = 0.01; //Depending on this number, there could be artifacts in the scene
 	comps.over_point = comps.point + comps.normal * epsilon;
 
+	//Reflect vector
+	comps.reflectV = reflect(ray.direction, comps.normal);
+
+	//Refraction
+	//Calculating refraction indices
+	vector<Shape*> container;
+	for (Itr i : xs)
+	{
+		if (i == intersection)
+		{
+			if (container.empty())
+				comps.n1 = 1;
+			else
+				comps.n1 = container.back()->mat.refractive_index;
+		}
+		
+		//Check if the container has the object of the intersection
+		//If true, it erases it
+		//If false, it inserts it
+		contains(&container, i.object);
+
+		if (i == intersection)
+		{
+			if (container.empty())
+				comps.n2 = 1;
+			else
+				comps.n2 = container.back()->mat.refractive_index;
+
+			//No need to continue the loop
+			break;
+		}
+	}
+	//The same as over point, we need to make sure that to calculate refraction,
+	//the intersection point starts inside the object
+	//(If I dont cast type to a tuple the substraction does not work)
+	
+	comps.under_point = (Tuple)comps.point - comps.normal * epsilon;
+
 	return comps;
 }
 
-//Color of the intersection encapsulated in the given world
-Color shade_hit(World world, ItrComps comps)
-{
-	bool shadowed = is_shadowed(world, comps.over_point);
-	
-	return lighting(comps.object, world._light, comps.point, comps.eye, comps.normal, shadowed);
-}
 
 //Returns color of intersection by a ray in the given world
-Color color_at(World world, myRay ray)
+Color color_at(World world, myRay ray, int remaining)
 {
 	//Find intersections
 	vector<Itr> its = intersect_world(world, ray);
-	
+
 	//Find the closest, real hit inside the intersections
 	Itr i = hit(its);
 
-	
+
 	//Return black if there is no hit
 	if (i.t == NULL)
 		return Color(0, 0, 0);
-		
+
 	else
 	{
 		//Precompute extra intersection values
-		ItrComps comps = prepare_computations(i, ray);
+		ItrComps comps = prepare_computations(i, ray, its);
 
 		//Color the hit
-		return shade_hit(world, comps);
+		return shade_hit(world, comps, remaining);
 	}
-	
+
 }
+
 
 //Check if a point is in shadows
 bool is_shadowed(World world, myPoint point)
@@ -312,9 +367,109 @@ bool is_shadowed(World world, myPoint point)
 		return true;
 	else
 		return false;
+
+}
+
+//Color of the intersection encapsulated in the given world
+Color shade_hit(World world, ItrComps comps, int remaining)
+{
+	bool shadowed = is_shadowed(world, comps.over_point);
+	
+	Color surface = lighting(comps.object, world._light, comps.point, comps.eye, comps.normal, shadowed);
+	Color reflect = reflected_color(world, comps, remaining);
+	Color refract = refracted_color(world, comps, remaining);
+
+	Material material = comps.object->mat;
+
+	if (material.reflective > 0 && material.transparency > 0)
+	{
+		float reflectance = schlick(comps);
+		return surface + reflect * reflectance + refract * (1 - reflectance);
+	}
+	else
+		return surface + reflect + refract;
+
 	
 }
 
+//Return the color of a point given its reflectance value
+Color reflected_color(World world, ItrComps comps, int remaining)
+{
+	Color reflectColor;
+	//If no reflectance, returns black
+	if (comps.object->mat.reflective == 0 || remaining <= 0)
+		return Color(0, 0, 0);
+	else
+	{
+		myRay reflect_ray = myRay(comps.over_point, comps.reflectV);
+		reflectColor = color_at(world, reflect_ray, remaining - 1);
+	}
+
+	return reflectColor * comps.object->mat.reflective;
+}
+
+//Returns the color of a point in a refractive object
+Color refracted_color(World world, ItrComps comps, int remaining)
+{
+	if (comps.object->mat.transparency == 0 || remaining <= 0)
+		return Color(0, 0, 0);
+	else
+	{
+		//Total internal reflection (Snells Law)
+		//First find ratio of refractive indexes
+		float n_ratio = comps.n1 / comps.n2;
+
+		//cos(theta_i) of incident ray is the dot product between ray with noraml
+		float cos_i = dot(comps.eye, comps.normal);
+
+		//Find sin(theta_t)^2 with trigonometry identity
+		float sin2_t = pow(n_ratio, 2) * (1 - pow(cos_i, 2));
+
+		if (sin2_t > 1) //Total internal reflection, so we return black color
+			return Color(0, 0, 0);
+		else //Compute refraction
+		{
+			//Find cos(theta_t) via trigonometric identity​
+			float cos_t = sqrt(1.0 - sin2_t);
+
+			//Compute direction of refracted ray
+			myVector direction;
+			direction = comps.normal * (n_ratio * cos_i - cos_t) - comps.eye * n_ratio;
+
+			//Refracted ray
+			myRay refractRay = myRay(comps.under_point, direction);
+
+			return color_at(world, refractRay, remaining - 1) * comps.object->mat.transparency;
+		}
+	}
+}
+
+//Returns a number called reflectance, which is the fraction of light being reflected
+float schlick(ItrComps comps)
+{
+	//Cosine of angle between eye and normal
+	float cos = dot(comps.eye, comps.normal);
+
+	//Total internal reflection can only occur when n1 > n2
+	if (comps.n1 > comps.n2)
+	{
+		float n_ratio = comps.n1 / comps.n2;
+		float sin2_t = pow(n_ratio, 2) * (1 - pow(cos, 2));
+
+		if (sin2_t > 1)
+			return 1.0;
+
+		//Find cos(theta_t) via trigonometric identity​
+		float cos_t = sqrt(1.0 - sin2_t);
+
+		//When n1 > n2 use cos(theta_t) instead of cos
+		cos = cos_t;
+
+	}
+	
+	float r0 = pow((comps.n1 - comps.n2) / (comps.n1 + comps.n2), 2);
+	return r0 + (1 - r0) * pow(1 - cos, 5);
+}
 
 
 

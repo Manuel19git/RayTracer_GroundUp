@@ -27,6 +27,8 @@ public:
 		return empty;
 	}
 
+	bool operator==(const Shape& rhs);
+
 	int id;
 	MyMatrix transform;
 	Material mat;

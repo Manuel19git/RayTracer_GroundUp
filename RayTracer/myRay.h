@@ -18,6 +18,13 @@ struct Material
 
 	bool showPattern;
 	Pattern* pattern;
+
+	//Reflection
+	float reflective;
+	//Transparency
+	float transparency;
+	//Refraction
+	float refractive_index;
 };
 
 

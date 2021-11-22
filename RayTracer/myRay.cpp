@@ -35,6 +35,9 @@ Material material()
 	m.specular = 0.9;
 	m.shininess = 200.0;
 	m.showPattern = false;
+	m.reflective = 0.0; //No reflectance
+	m.transparency = 0.0; //Opaque
+	m.refractive_index = 1.0; //Object empty
 
 	return m;
 }
