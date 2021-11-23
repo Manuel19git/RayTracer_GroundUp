@@ -8,5 +8,5 @@ This first scene I got from the ray tracer depicted the only geometry I was able
 The use of patterns allows for a better understanding on the geometry of the objects. I did not use an UV map to wrap patterns on the geometry.
 ## ![Scene with patterns](../assets/Pattern_Sphere.png)
 
-The floor has a reflective attribute and the sphere has the refractive index of glass.
+The floor has a reflective attribute and the middle sphere has the refractive index of glass.
 ## ![Scene with reflection and refraction](../assets/Sphere_Reflection_Refraction.png)
