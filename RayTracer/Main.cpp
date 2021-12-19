@@ -1184,20 +1184,93 @@ void testSceneReflectionRefraction()
     left.mat.diffuse = 0.7;
     left.mat.specular = 0.3;
 
+    Cube cube;
+    cube.mat = material();
+    cube.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    cube.mat.color = Color(1, 0.8, 0.1);
+    cube.mat.reflective = 0.4;
 
-    vector<Shape*> objects = {&floor, &left_wall, &right_wall, &middle, &behind, &right, &left};
+    Cylinder cyl;
+    cyl.mat = material();
+    cyl.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    cyl.mat.color = Color(0.5, 1, 0.1);
+    cyl.maximum = 1.5;
+    cyl.minimum = 0;
+    cyl.mat.reflective = 0.4;
+    cyl.closed = true;
+
+    Cone cone;
+    cone.mat = material();
+    cone.transform = translation(-0.5, 1.5, 0.5);
+    cone.minimum = -1;
+    cone.maximum = 1;
+    cone.mat.color = Color(0.8, 0.8, 0.8);
+    cone.mat.reflective = 0;
+    cone.mat.transparency = 0.8;
+    cone.mat.refractive_index = 1.5;
+
+    //vector<Shape*> objects = {&floor, &left_wall, &right_wall, &middle, &behind, &right, &cube};
+    vector<Shape*> objects = { &floor, &left_wall, &right_wall, &cube, &cyl, &cone};
     Light l = light();
     l.position = myPoint(-10, 10, -10);
 
     World world = World(objects, l);
 
-    //Camera cam = Camera(320, 180, PI / 3);
-    Camera cam = Camera(1920, 1080, PI / 3);
+    Camera cam = Camera(320, 180, PI / 3);
+    //Camera cam = Camera(1920, 1080, PI / 3);
     cam.transform = view_transform(myPoint(0, 1.5, -5), myPoint(0, 1, 0), myVector(0, 1, 0));
 
     Canvas canvas = cam.render(world);
 
     canvas.canvas_to_ppm();
+
+}
+
+void testCubeAndCylinder()
+{
+    Cube c;
+    myRay r = myRay(myPoint(5,0.5,0), myVector(-1,0,0));
+    vector<float> t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(-5, 0.5, 0), myVector(1, 0, 0));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0.5, 5, 0), myVector(0, -1, 0));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0.5, -5, 0), myVector(0, 1, 0));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0.5, 0, 5), myVector(0, 0, -1));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0.5, 0, -5), myVector(0, 0, 1));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0, 0.5, 0), myVector(0, 0, 1));
+    t = c.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    cout << "-------------------------------" << endl;
+
+    Cone cone;
+    r = myRay(myPoint(0, 0, -5), myVector(0, 0, 1));
+    t = cone.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(0, 0, -5), myVector(1, 1, 1));
+    t = cone.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
+
+    r = myRay(myPoint(1, 1, -5), myVector(-0.5, -1, 1));
+    t = cone.intersectionT(r);
+    cout << "t1 " << t[0] << "   t2 " << t[1] << endl;
 
 }
 
@@ -1229,6 +1302,8 @@ int main()
     //testWallScene();
 
     testSceneReflectionRefraction();
+
+    //testCubeAndCylinder();
 
     auto stop = chrono::high_resolution_clock::now();
     cout << chrono::duration_cast<chrono::seconds>(stop - start).count() << " seconds" << endl;
